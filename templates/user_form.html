@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<form action="{{ form_action }}" method="POST">
+    <div class="form-group mt-2">
+        <label for="inputUsername">Käyttäjätunnus:</label>
+        <input type="text" class="form-control" id="inputUsername" name="inputUsername" aria-describedby="usernameHelp">
+        <small id="usernameHelp" class="form-text text-muted">{{ username_help }}</small>
+    </div>
+    <div class="form-group">
+        <label for="input_password">Salasana:</label>
+        <input type="password" class="form-control" id="inputPassword" name="inputPassword" aria-describedby="passwordHelp">
+        <small id="passwordHelp" class="form-text text-muted">{{ password_help }}</small>
+    </div>
+    <button type="submit" class="btn btn-primary">{{ user_form_action_button }}</button>
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+</form>

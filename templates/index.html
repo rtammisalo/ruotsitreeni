@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+{% extends "layout.html" %}
+{% block title %}Valitse harjoitus{% endblock %}
+{% block page_content %}
+<div class="row">
+    <div class="col-12">
+        <h1>Valitse listalta harjoitus:</h1>
+    </div>
+    <div class="col-8">
+        {% if admin %}
+        Salattu näkymä. <br>
+        {% endif %}
+        Tyhjää täynnä.
+    </div>
+</div>
+{% endblock %}
