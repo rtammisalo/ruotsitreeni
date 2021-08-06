@@ -3,14 +3,35 @@
 {% block title %}Valitse harjoitus{% endblock %}
 {% block page_content %}
 <div class="row">
-    <div class="col-12">
-        <h1>Valitse listalta harjoitus:</h1>
-    </div>
     <div class="col-8">
+        <div class="row">
+            <div class="col-12">
+                <h1>Valitse listalta harjoitus:</h1>
+            </div>
+        </div>
         {% if admin %}
-        Salattu näkymä. <br>
+        <div class="row">
+            <div class="col-12 mb-3 mt-2">
+                <a href="/exercise/new"><b>+</b> Lisää uusi harjoitus</a>
+            </div>
+        </div>
         {% endif %}
-        Tyhjää täynnä.
+        {% for exercise in exercises %}
+            {% if exercise.visible or admin %}
+                <div class="row no-gutters bg-light position-relative mt-1 mb-1">
+                    <div class="col-12 mt-2 p-2">
+                        <h3>{{ exercise.title }}
+                        {% if not exercise.visible %}
+                        <small class="text-muted">(näkymätön)</small>
+                        {% endif %}
+                        </h3>
+                        <p>{{ exercise.topic }}</p>
+                        <a href="/exercise/{{ exercise.id }}" class="stretched-link">Mene harjoitukseen</a>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
     </div>
 </div>
+
 {% endblock %}
