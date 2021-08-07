@@ -18,7 +18,8 @@ CREATE TABLE words (
     id SERIAL PRIMARY KEY,
     exercise_id INTEGER REFERENCES exercises,
     finnish_word TEXT,
-    swedish_word TEXT
+    swedish_word TEXT,
+    image_data BYTEA
 );
 
 CREATE TABLE answer_choices (

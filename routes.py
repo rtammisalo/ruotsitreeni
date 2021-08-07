@@ -2,6 +2,7 @@ from flask import render_template, request, redirect, abort
 from flask_init import app
 import users
 import exercises
+import words
 
 USERNAME_HELP_STRING = "Käyttäjätunnus tulee olla 3 - 12 merkkiä pitkä ja voi sisältää kirjaimia ja numeroita."
 PASSWORD_HELP_STRING = "Salasanan tulee olla 6-20 merkkiä pitkä ja voi sisältää kirjaimia, erikoismerkkejä ja numeroita."
@@ -10,6 +11,7 @@ PASSWORD_HELP_STRING = "Salasanan tulee olla 6-20 merkkiä pitkä ja voi sisält
 @app.route("/")
 def index():
     user_id = users.get_logged_user_id()
+
     if user_id:
         kwargs = {"user_id": user_id, "admin": users.is_admin(), "error": None,
                   "exercises": exercises.get_exercises()}
@@ -18,13 +20,63 @@ def index():
     return render_login()
 
 
-@app.route("/exercise/<int:exercise_id>/visible")
+@app.route("/exercise/<int:exercise_id>/word")
+def show_words(exercise_id):
+    if not users.is_admin():
+        abort(403)
+
+    exercise = get_exercise_or_abort(exercise_id)
+    exercise_words = words.get_words(exercise_id)
+
+    return render_template("word.html", exercise=exercise, words=exercise_words)
+
+
+@app.route("/exercise/<int:exercise_id>/word/new", methods=["POST"])
+def create_word(exercise_id):
+    abort_invalid_user_data(admin_required=True)
+
+    exercise = get_exercise_or_abort(exercise_id)
+    finnish_word = request.form["inputFinnishWord"]
+    swedish_word = request.form["inputSwedishWord"]
+    image_file = request.files["inputImage"]
+    image_data = image_file.read()
+    filename = image_file.filename
+    error_msg = ""
+
+    if not image_file or not filename.endswith((".jpg", ".png")):
+        error_msg = "Virhe: tiedosto ei ole tyyppiä jpeg tai png."
+
+    if len(image_data) > 150 * 1024:
+        error_msg = "Virhe: tiedosto on suurempi kuin 150 kB."
+
+    if not finnish_word:
+        error_msg = "Virhe: suomenkielinen sana puuttuu."
+
+    if not swedish_word:
+        error_msg = "Virhe: ruotsinkielinen sana puuttuu."
+
+    if error_msg:
+        return render_template("word.html", exercise=exercise,
+                               words=words.get_words(exercise_id),
+                               error=error_msg)
+    
+    words.add_word(exercise_id, finnish_word, swedish_word, image_data)
+
+    return redirect(f"/exercise/{exercise_id}/word")
+
+
+
+@ app.route("/exercise/<int:exercise_id>/visible")
 def flip_exercise_visibility(exercise_id):
-    exercise = exercises.get_exercise(exercise_id)
+    if not users.is_admin():
+        abort(403)
+
+    exercise = get_exercise_or_abort(exercise_id)
     exercises.set_visible(exercise_id, not exercise.visible)
     return redirect(f"/exercise/{exercise_id}")
 
-@app.route("/exercise/new", methods=["GET", "POST"])
+
+@ app.route("/exercise/new", methods=["GET", "POST"])
 def create_exercise():
     if not users.is_admin():
         abort(403)
@@ -45,16 +97,17 @@ def create_exercise():
             return render_template("create_exercise.html", error=err)
 
 
-@app.route("/exercise/<int:exercise_id>")
+@ app.route("/exercise/<int:exercise_id>")
 def show_exercise(exercise_id):
     if not users.get_logged_user_id():
         return redirect("/")
 
-    exercise = exercises.get_exercise(exercise_id)
+    exercise = get_exercise_or_abort(exercise_id)
+
     return render_template("exercise.html", admin=users.is_admin(), exercise=exercise)
 
 
-@app.route("/login", methods=["POST"])
+@ app.route("/login", methods=["POST"])
 def login():
     if users.get_logged_user_id():
         return redirect("/")
@@ -70,7 +123,7 @@ def login():
     return redirect("/")
 
 
-@app.route("/create_user", methods=["POST", "GET"])
+@ app.route("/create_user", methods=["POST", "GET"])
 def create_user():
     if users.get_logged_user_id():
         return redirect("/")
@@ -89,7 +142,7 @@ def create_user():
     return redirect("/")
 
 
-@app.route("/logout")
+@ app.route("/logout")
 def logout_user():
     if users.get_logged_user_id():
         users.logout()
@@ -112,8 +165,18 @@ def abort_invalid_user_data(admin_required=False):
 
         if not csrf_token:
             raise users.UserValidationError
-        
+
         users.validate_user(csrf_token, admin_required)
 
     except users.UserValidationError as err:
         abort(403)
+
+
+def get_exercise_or_abort(exercise_id):
+    # Handle aborts in routes module
+    exercise = exercises.get_exercise(exercise_id)
+
+    if not exercise:
+        abort(404)
+
+    return exercise

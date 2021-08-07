@@ -2,11 +2,11 @@
 {% extends "layout.html" %}
 {% block title %}Harjoitusnäkymä{% endblock %}
 {% block page_content %}
-<div class="row no-gutters">
-    <div class="col-8">
+<div class="row no-gutters justify-content-between">
+    <div class="col-7">
         Harjoitusnäkymä
     </div>
-    <div class="col-4 bg-light rounded">
+    <div class="col-4 bg-light rounded p-2">
         <h3>{{ exercise.title }}
         {% if not exercise.visible %}
             <small class="text-muted">(näkymätön)</small>
@@ -16,18 +16,18 @@
         <hr>
         <div class="col-12 text-center">
         {% if admin %}
-            <a class="btn btn-primary mb-2 w-50" href="#" role="button">Muuta tietoja</a>
+            <a class="btn btn-primary mb-2 w-75" href="#" role="button">Muuta tietoja</a>
             <br>
-            <a class="btn btn-primary mb-2 w-50" href="#" role="button">Muokkaa sanoja</a>
+            <a class="btn btn-primary mb-2 w-75" href="/exercise/{{ exercise.id }}/word" role="button">Muokkaa sanoja</a>
             <br>
             {% if not exercise.visible %}
-                <a class="btn btn-primary mb-2 w-50" href="/exercise/{{ exercise.id }}/visible" role="button">Tee näkyväksi</a>
+                <a class="btn btn-primary mb-2 w-75" href="/exercise/{{ exercise.id }}/visible" role="button">Tee näkyväksi</a>
             {% else %}
-                <a class="btn btn-primary mb-2 w-50" href="/exercise/{{ exercise.id }}/visible" role="button">Tee näkymättömäksi</a>
+                <a class="btn btn-primary mb-2 w-75" href="/exercise/{{ exercise.id }}/visible" role="button">Tee näkymättömäksi</a>
             {% endif %}
             <br>
         {% endif %}
-        <a class="btn btn-primary mb-2 w-50" href="/" role="button">Lopeta harjoittelu</a><br>
+        <a class="btn btn-primary mb-2 w-75" href="/" role="button">Lopeta harjoittelu</a><br>
         </div>
     </div>
 </div>
