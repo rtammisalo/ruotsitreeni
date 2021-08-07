@@ -43,27 +43,29 @@ def create_word(exercise_id):
     filename = image_file.filename
     error_msg = ""
 
-    if not image_file or not filename.endswith((".jpg", ".png")):
-        error_msg = "Virhe: tiedosto ei ole tyyppiä jpeg tai png."
-
-    if len(image_data) > 150 * 1024:
-        error_msg = "Virhe: tiedosto on suurempi kuin 150 kB."
-
     if not finnish_word:
         error_msg = "Virhe: suomenkielinen sana puuttuu."
 
     if not swedish_word:
         error_msg = "Virhe: ruotsinkielinen sana puuttuu."
 
+    if not image_file or not filename.endswith((".jpg", ".png")):
+        error_msg = "Virhe: tiedosto ei ole tyyppiä jpeg tai png."
+
+    if len(image_data) > 150 * 1024:
+        error_msg = "Virhe: tiedosto on suurempi kuin 150 kB."
+
     if error_msg:
         return render_template("word.html", exercise=exercise,
                                words=words.get_words(exercise_id),
                                error=error_msg)
-    
-    words.add_word(exercise_id, finnish_word, swedish_word, image_data)
+
+    choices = request.form["inputMultipleChoice"].splitlines()
+    word_id = words.add_word(exercise_id, finnish_word,
+                             swedish_word, image_data)
+    words.add_multiple_choices(word_id, choices)
 
     return redirect(f"/exercise/{exercise_id}/word")
-
 
 
 @ app.route("/exercise/<int:exercise_id>/visible")
