@@ -26,7 +26,7 @@ def post_message():
     message = request.form["inputMessage"]
 
     if message:
-        messages.add_message(users.get_logged_user_id(), message)
+        messages.add_message(users.get_logged_user_id(), message[:50])
 
     return redirect("/")
 
@@ -101,7 +101,7 @@ def create_word(exercise_id):
     choices = request.form["inputMultipleChoice"].splitlines()
     word_id = words.add_word(exercise_id, finnish_word,
                              swedish_word, image_data)
-    words.add_multiple_choices(word_id, choices)
+    words.add_multiple_choices(word_id, choices[:20])
 
     return redirect(f"/exercise/{exercise_id}/word")
 
