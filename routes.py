@@ -1,4 +1,5 @@
-from flask import render_template, request, redirect, abort
+from flask import render_template, request, redirect, abort, session
+from flask.helpers import make_response
 from flask_init import app
 import users
 import exercises
@@ -18,6 +19,35 @@ def index():
         return render_template("index.html", **kwargs)
 
     return render_login()
+
+
+@app.route("/image/<int:word_id>")
+def show_image(word_id):
+    image_data = words.get_word(word_id).image_data
+    response = make_response(bytes(image_data))
+    response.headers.set("Content-Type", "image/png")
+
+    return response
+
+
+@app.route("/exercise/<int:exercise_id>/word/<int:word_id>/answer", methods=["POST"])
+def process_exercise_answer(exercise_id, word_id):
+    abort_invalid_user_data()
+    
+    answer = request.form["answer"]
+    word = words.get_word(word_id)
+    redirection = redirect(f"/exercise/{exercise_id}")
+
+    if not answer or not word:
+        return redirection
+
+    session["answer"] = answer
+    session["correct_answer"] = word.swedish_word
+
+    result = (answer == word.swedish_word)
+    words.add_answer(users.get_logged_user_id(), word_id, result)
+
+    return redirection
 
 
 @app.route("/exercise/<int:exercise_id>/word")
@@ -49,8 +79,8 @@ def create_word(exercise_id):
     if not swedish_word:
         error_msg = "Virhe: ruotsinkielinen sana puuttuu."
 
-    if not image_file or not filename.endswith((".jpg", ".png")):
-        error_msg = "Virhe: tiedosto ei ole tyyppiä jpeg tai png."
+    if not image_file or not filename.endswith((".png")):
+        error_msg = "Virhe: tiedosto ei ole tyyppiä png."
 
     if len(image_data) > 150 * 1024:
         error_msg = "Virhe: tiedosto on suurempi kuin 150 kB."
@@ -105,8 +135,22 @@ def show_exercise(exercise_id):
         return redirect("/")
 
     exercise = get_exercise_or_abort(exercise_id)
+    word = words.get_random_word(exercise_id)
+    choices = None
+    answer = session.get("answer", None)
+    correct_answer = session.get("correct_answer", None)
 
-    return render_template("exercise.html", admin=users.is_admin(), exercise=exercise)
+    if answer and correct_answer:
+        del session["answer"]
+        del session["correct_answer"]
+
+    if word:
+        choices = words.get_multiple_choices(word.id, word.swedish_word)
+
+    kwargs = {"admin": users.is_admin(), "exercise": exercise,
+              "word": word, "multiple_choices": choices, "answer": answer,
+              "correct_answer": correct_answer}
+    return render_template("exercise.html", **kwargs)
 
 
 @ app.route("/login", methods=["POST"])

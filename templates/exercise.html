@@ -3,8 +3,40 @@
 {% block title %}Harjoitusnäkymä{% endblock %}
 {% block page_content %}
 <div class="row no-gutters justify-content-between">
-    <div class="col-7">
-        Harjoitusnäkymä
+    <div class="col-7 text-center">
+        {% if not word %}
+        <p class="mt-2">Harjoituksessa ei ole vielä sanoja.</p>
+        {% else %}
+        <h3 class="mt-2 mb-0 pb-0">{{ word.finnish_word }}</h3>
+        <small class="text-muted mt-0 pt-0 mb-1">suomeksi</small><br>
+        <img src="/image/{{ word.id }}" class="img-fluid" alt="Kuva sanasta {{ word.finnish_word }}">
+        <hr>
+        <form action="/exercise/{{ exercise.id }}/word/{{ word.id }}/answer" method="POST">
+            <div class="form-group">
+            <label>Valitse oikea vastaus ruotsiksi:</label><br>
+            {% for five_choices in multiple_choices|batch(5) %}
+                <div class="row btn-group btn-group-justified mb-1">
+                {% for choice in five_choices %}
+                    <button type="submit" class="btn btn-light ml-1 mr-1" name="answer" value="{{ choice }}">{{ choice }}</button>
+                {% endfor %}
+                </div>
+                <br>
+            {% endfor %}
+            </div>
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+        </form>
+        {% if answer %}
+        {% set alert_type = "alert-danger" %}
+        {% if answer == correct_answer%}{% set alert_type = "alert-success" %}{% endif %}
+        <div class="alert {{ alert_type }} mt-2 w-100" role="alert">
+            {% if answer != correct_answer %}
+                Vastasit väärin. Oikea vastaus oli: {{ correct_answer }}
+            {% else %}
+                Vastasit oikein!
+            {% endif %}
+        </div>
+        {% endif %}
+        {% endif %}
     </div>
     <div class="col-4 bg-light rounded p-2">
         <h3>{{ exercise.title }}
