@@ -34,3 +34,10 @@ CREATE TABLE answers (
     word_id INTEGER REFERENCES words,
     result BOOLEAN
 );
+
+CREATE TABLE messages (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users,
+    created_at TIMESTAMP,
+    content TEXT
+);

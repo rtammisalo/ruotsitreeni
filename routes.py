@@ -4,6 +4,7 @@ from flask_init import app
 import users
 import exercises
 import words
+import messages
 
 
 @app.route("/")
@@ -12,9 +13,22 @@ def index():
 
     if user_id:
         return render_user_template("index.html",
-                                    exercises=exercises.get_exercises())
+                                    exercises=exercises.get_exercises(),
+                                    messages=messages.get_last_messages(50))
 
     return render_login()
+
+
+@app.route("/message/post", methods=["POST"])
+def post_message():
+    abort_invalid_user_data()
+
+    message = request.form["inputMessage"]
+
+    if message:
+        messages.add_message(users.get_logged_user_id(), message)
+
+    return redirect("/")
 
 
 @app.route("/image/<int:word_id>")
@@ -206,6 +220,7 @@ def abort_invalid_user_data(admin_required=False):
         csrf_token = request.form.get("csrf_token", None)
 
         if not csrf_token:
+            print("juhuu")
             raise users.UserValidationError
 
         users.validate_user(csrf_token, admin_required)
@@ -213,9 +228,11 @@ def abort_invalid_user_data(admin_required=False):
     except users.UserValidationError as err:
         abort(403)
 
+
 def abort_non_admin():
     if not users.is_admin():
         abort(403)
+
 
 def get_exercise_or_abort(exercise_id):
     # Handle aborts in routes module
