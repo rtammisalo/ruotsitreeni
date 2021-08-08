@@ -1,7 +1,7 @@
 <div class="border border-info rounded m-2 p-1">
     <h3 class="text-center">HypeZone</h3>
     <div class="overflow-auto mt-3 mb-2 bg-light d-flex flex-column-reverse text-break" style="height: 25em">
-        <ul class="list-group list-group-flush>
+        <ul class="list-group list-group-flush">
             {% for message in messages %}
             <li class="list-group-item">{{ message.username }}: {{ message.content }}</li>
             {% endfor %}
