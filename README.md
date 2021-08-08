@@ -2,7 +2,53 @@
 
 Sovelluksen tarkoituksena on ruotsin kielen perussanaston harjoittelu. Toisin kuin esimerkkisovelluksessa, Ruotsitreenissä ei käyttäjä voi luoda uusia harjoituksia ja/tai pakkoja, vaan kaikki harjoitukset ja sanat lisätään valmiina adminin toimesta sovelluksen tietokantaan. Pelkän suomi/ruotsi 'kortin' sijaan käytetään sovelluksessa hyödyksi kuvia, esim. kuva omenasta, jonka käyttäjä joutuu yhdistämään ruotsin kieliseen sanaan. Sanat jaetaan vaikkapa 100 sanan setteihin, joita käyttäjän oletetaan harjoittelevan, kunnes hän saa tarpeeksi monta oikein vastattua putkeen. Yhden setin harjoituksissa voisi myös olla kaksi eri vaikeustasoa, joista helpoimmassa aloitetaan setin harjoittelu 'tyhjästä', eli vastauksen kirjoittamisen sijaan tulee valita oikea vaihtoehto monivalintana. Kun käyttäjä läpäisee helpon vaikeustason, voi edetä vaikeammalle tasolle, jossa tulee vastata kirjoittamalla sana vastauskenttään.
 
-## Sovelluksen ominaisuudet
+## Asennusohjeet
+
+Lataa sovellus githubista. Seuraavat komennot ajetaan kaikki projektin rootista. Ensin luo uusi virtual environment komennolla:
+``` bash
+python3 -m venv venv
+```
+Voit hakea tarvittavat python paketit komennolla:
+``` bash
+pip install -r requirements.txt
+```
+Muista luoda Postgress tietokanta ja luoda taulut schemasta:
+``` bash
+psql -f schema.sql
+```
+Ohjelma tarvitsee myös `.env` tiedoston projektin roottiin, jossa on seuraavat tiedot:
+```
+SECRET_KEY= *Luo salainen avain esim. pythonin secrets-moduulilla: secrets.token_hex(16) ja liitä se tähän kohtaan*
+DATABASE_URL=postgresql+psycopg2://
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=salasana
+```
+Ohjelma käynnistyessään yrittää luoda admin-tilin annetulla nimellä ja salasanalla.
+
+Aja ohjelma paikallisesti flaskin avulla:
+``` bash
+flask run
+```
+
+Sovelluksen tulisi olla nyt käytettävissä osoitteessa: http://127.0.0.1:5000/
+
+## Heroku
+
+Voit luoda Heroku version sovelluksesta käyttämällä kurssin ohjeita apuna. Ohjelmaa voi myös testata osoitteessa [Ruotsitreeni](https://tsoha-ruotsitreeni.herokuapp.com/). Olen tehnyt admin-tilin, jos haluat kokeilla uusien harjoitusten tai sanojen tekoa (nimi 'admin' ja salasana *yllapito*).
+
+## Sovelluksen toteutetut ominaisuudet
+
+- Käyttäjä tili salasanalla. Tilastointia ei ole vielä toteutettu. Käyttäjä ei voi poistaa itseeän tai muuttaa salasanaa.
+- Admin-tilillä voi luoda uusia harjoituksia, eli antaa harjoitukselle nimi sekä kuvaus.
+- Harjoituksen luonnin jälkeen siirrytään luomaan uusia sanoja.
+- Sanat liittyvät jokainen yhteen harjoitukseen. Sanalla on suomenkielinen ja ruotsinkielinen kenttä, sekä kuva.
+- Sanoille voidaan myös antaa monivalinnan vastauksia listassa. Jos vääriä vastausvaihtoehtoja ei anna, niin sovellus valitsee satunnaisesti muista sanoista.
+- Sanoja tai harjoituksia ei voi vielä poistaa tai muuttaa. Harjoitukset voi kuitenkin muuttaa näkymättömiksi, jolloin tavalliset käyttäjät eivät niitä kykene näkemään.
+- Harjoituksissa ei ole toteutettuna kuin ensimmäinen monivalintaan liittyvä vaikeusaste.
+- Vieraskirja (HypeZone) näkyy pääsivulla oikealla harjoitusten vieressä. Admin-tili ei voi vielä poistaa viestejä. Viesteissä näkyy kirjoittaja ja viestin sisältö.
+- Haluaisin parantaa käytettävyyttä liittyen virheellisen tiedon antamiseen lomakkeissa. Lomake tulisi takaisin täytettynä aikaisemmilla vastauksilla, eikä tyhjänä.
+
+## Sovelluksen ominaisuudet (aikaisempi suunnitelma)
 
 - Käyttäjällä on tili, johon liittyy salasana ja jonkinlainen tilastointi per harjoitukset (esim. onnistumisprosentti). 
 - Käyttäjä voi myös poistaa itsensä sovelluksesta.
