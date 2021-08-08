@@ -23,7 +23,9 @@ class UserValidationError(Exception):
 
 
 def get_user_data(username):
-    sql = "SELECT id, password_hash, account_type FROM users WHERE username=:username AND visible=TRUE"
+    sql = " ".join(("SELECT id, password_hash, account_type",
+                    "FROM users",
+                    "WHERE username=:username AND visible=TRUE"))
     return db.session.execute(sql, {"username": username}).fetchone()
 
 
@@ -125,7 +127,7 @@ def create(username, password, account_type=USER_ACCOUNT_TYPE, auto_login=True):
             login(username, password)
 
     except SQLAlchemyError as err:
-        raise CreateUserError("Virhe: käyttäjänimi on jo käytössä.")
+        raise CreateUserError("Virhe: käyttäjänimi on jo käytössä.") from err
 
 
 def create_admin_account(username="admin", password="admin1"):
@@ -138,3 +140,4 @@ def create_admin_account(username="admin", password="admin1"):
     except CreateUserError as err:
         print("Error: could not create admin account '" +
               username + "' with password '" + password + "'.")
+        print(err)

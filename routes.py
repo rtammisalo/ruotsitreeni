@@ -134,6 +134,8 @@ def create_exercise():
         except exercises.CreateExerciseError as err:
             return render_user_template("create_exercise.html", error=err)
 
+    return redirect("/")
+
 
 @ app.route("/exercise/<int:exercise_id>")
 def show_exercise(exercise_id):
@@ -225,7 +227,7 @@ def abort_invalid_user_data(admin_required=False):
 
         users.validate_user(csrf_token, admin_required)
 
-    except users.UserValidationError as err:
+    except users.UserValidationError:
         abort(403)
 
 

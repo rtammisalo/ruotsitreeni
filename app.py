@@ -1,6 +1,5 @@
 from flask_init import app
 import config
-import routes
 import users
 
 if not config.config_file_found():

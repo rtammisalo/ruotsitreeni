@@ -39,4 +39,4 @@ def create(title, topic):
         db.session.commit()
         return result.fetchone()[0]
     except SQLAlchemyError as err:
-        raise CreateExerciseError("Virhe: harjoituksen nimi on jo käytössä.")
+        raise CreateExerciseError("Virhe: harjoituksen nimi on jo käytössä.") from err
