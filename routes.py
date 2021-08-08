@@ -35,7 +35,7 @@ def post_message():
 def show_image(word_id):
     image_data = words.get_word(word_id).image_data
     response = make_response(bytes(image_data))
-    response.headers.set("Content-Type", "image/png")
+    response.headers.set("Content-Type", "image/jpeg")
 
     return response
 
@@ -87,8 +87,8 @@ def create_word(exercise_id):
     if not swedish_word:
         error_msg = "Virhe: ruotsinkielinen sana puuttuu."
 
-    if not image_file or not filename.endswith((".png")):
-        error_msg = "Virhe: tiedosto ei ole tyyppiä png."
+    if not image_file or not filename.endswith((".jpg")):
+        error_msg = "Virhe: tiedosto ei ole tyyppiä jpg."
 
     if len(image_data) > 150 * 1024:
         error_msg = "Virhe: tiedosto on suurempi kuin 150 kB."
