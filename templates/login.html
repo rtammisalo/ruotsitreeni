@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 {% extends "layout.html" %}
 {% block title %}Sisäänkirjautuminen{% endblock %}
 {% block page_content %}
@@ -18,7 +17,7 @@
             Tervetuloa Ruotsitreenin pariin!
         </p>
     </div>
-    <div class="col-6">
+    <div class="col-6 pt-2">
         {% if error %}
         <div class="alert alert-danger mt-2" role="alert">
             {{ error }}

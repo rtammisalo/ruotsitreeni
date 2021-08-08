@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 {% extends "layout.html" %}
 {% block title %}Luo uusi käyttäjätili{% endblock %}
 {% block page_content %}
@@ -9,7 +8,7 @@
             Kun olet luonut oman käyttäjätilin, voit alkaa tekemään Ruotsitreenin harjoituksia.
         </p>
     </div>
-    <div class="col-6">
+    <div class="col-6 pt-2">
         {% if error %}
         <div class="alert alert-danger mt-2" role="alert">
             {{ error }}
