@@ -17,6 +17,8 @@
         {% endif %}
         {% set user_form_action_button = "Luo uusi käyttäjätili" %}
         {% set form_action = "/create_user" %}
+        {% set username_help = "Käyttäjätunnus tulee olla 3 - 12 merkkiä pitkä ja voi sisältää kirjaimia ja numeroita." %}
+        {% set password_help = "Salasanan tulee olla 6-20 merkkiä pitkä ja voi sisältää kirjaimia, erikoismerkkejä ja numeroita." %}
         {% include "user_form.html" %}
     </div>
 </div>

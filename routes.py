@@ -5,18 +5,14 @@ import users
 import exercises
 import words
 
-USERNAME_HELP_STRING = "Käyttäjätunnus tulee olla 3 - 12 merkkiä pitkä ja voi sisältää kirjaimia ja numeroita."
-PASSWORD_HELP_STRING = "Salasanan tulee olla 6-20 merkkiä pitkä ja voi sisältää kirjaimia, erikoismerkkejä ja numeroita."
-
 
 @app.route("/")
 def index():
     user_id = users.get_logged_user_id()
 
     if user_id:
-        kwargs = {"user_id": user_id, "admin": users.is_admin(), "error": None,
-                  "exercises": exercises.get_exercises()}
-        return render_template("index.html", **kwargs)
+        return render_user_template("index.html",
+                                    exercises=exercises.get_exercises())
 
     return render_login()
 
@@ -33,7 +29,7 @@ def show_image(word_id):
 @app.route("/exercise/<int:exercise_id>/word/<int:word_id>/answer", methods=["POST"])
 def process_exercise_answer(exercise_id, word_id):
     abort_invalid_user_data()
-    
+
     answer = request.form["answer"]
     word = words.get_word(word_id)
     redirection = redirect(f"/exercise/{exercise_id}")
@@ -43,7 +39,6 @@ def process_exercise_answer(exercise_id, word_id):
 
     session["answer"] = answer
     session["correct_answer"] = word.swedish_word
-
     result = (answer == word.swedish_word)
     words.add_answer(users.get_logged_user_id(), word_id, result)
 
@@ -52,13 +47,12 @@ def process_exercise_answer(exercise_id, word_id):
 
 @app.route("/exercise/<int:exercise_id>/word")
 def show_words(exercise_id):
-    if not users.is_admin():
-        abort(403)
+    abort_non_admin()
 
     exercise = get_exercise_or_abort(exercise_id)
     exercise_words = words.get_words(exercise_id)
 
-    return render_template("word.html", exercise=exercise, words=exercise_words)
+    return render_user_template("word.html", exercise=exercise, words=exercise_words)
 
 
 @app.route("/exercise/<int:exercise_id>/word/new", methods=["POST"])
@@ -86,9 +80,9 @@ def create_word(exercise_id):
         error_msg = "Virhe: tiedosto on suurempi kuin 150 kB."
 
     if error_msg:
-        return render_template("word.html", exercise=exercise,
-                               words=words.get_words(exercise_id),
-                               error=error_msg)
+        return render_user_template("word.html", exercise=exercise,
+                                    words=words.get_words(exercise_id),
+                                    error=error_msg)
 
     choices = request.form["inputMultipleChoice"].splitlines()
     word_id = words.add_word(exercise_id, finnish_word,
@@ -100,8 +94,7 @@ def create_word(exercise_id):
 
 @ app.route("/exercise/<int:exercise_id>/visible")
 def flip_exercise_visibility(exercise_id):
-    if not users.is_admin():
-        abort(403)
+    abort_non_admin()
 
     exercise = get_exercise_or_abort(exercise_id)
     exercises.set_visible(exercise_id, not exercise.visible)
@@ -110,11 +103,10 @@ def flip_exercise_visibility(exercise_id):
 
 @ app.route("/exercise/new", methods=["GET", "POST"])
 def create_exercise():
-    if not users.is_admin():
-        abort(403)
+    abort_non_admin()
 
     if request.method == "GET":
-        return render_template("create_exercise.html")
+        return render_user_template("create_exercise.html")
 
     if request.method == "POST":
         abort_invalid_user_data(admin_required=True)
@@ -126,7 +118,7 @@ def create_exercise():
             exercise_id = exercises.create(title, topic)
             return redirect(f"/exercise/{exercise_id}")
         except exercises.CreateExerciseError as err:
-            return render_template("create_exercise.html", error=err)
+            return render_user_template("create_exercise.html", error=err)
 
 
 @ app.route("/exercise/<int:exercise_id>")
@@ -147,10 +139,9 @@ def show_exercise(exercise_id):
     if word:
         choices = words.get_multiple_choices(word.id, word.swedish_word)
 
-    kwargs = {"admin": users.is_admin(), "exercise": exercise,
-              "word": word, "multiple_choices": choices, "answer": answer,
-              "correct_answer": correct_answer}
-    return render_template("exercise.html", **kwargs)
+    kwargs = {"exercise": exercise, "word": word, "multiple_choices": choices,
+              "answer": answer, "correct_answer": correct_answer}
+    return render_user_template("exercise.html", **kwargs)
 
 
 @ app.route("/login", methods=["POST"])
@@ -201,8 +192,13 @@ def render_login(error=None):
 
 
 def render_create_user(error=None):
-    return render_template("create_user.html", username_help=USERNAME_HELP_STRING,
-                           password_help=PASSWORD_HELP_STRING, error=error)
+    return render_template("create_user.html", error=error)
+
+
+def render_user_template(template, **kwargs):
+    kwargs["user_id"] = users.get_logged_user_id()
+    kwargs["admin"] = users.is_admin()
+    return render_template(template, **kwargs)
 
 
 def abort_invalid_user_data(admin_required=False):
@@ -217,6 +213,9 @@ def abort_invalid_user_data(admin_required=False):
     except users.UserValidationError as err:
         abort(403)
 
+def abort_non_admin():
+    if not users.is_admin():
+        abort(403)
 
 def get_exercise_or_abort(exercise_id):
     # Handle aborts in routes module

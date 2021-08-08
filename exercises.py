@@ -29,6 +29,7 @@ def set_visible(exercise_id, visible):
     db.session.execute(sql, {"exercise_id": exercise_id, "visible": visible})
     db.session.commit()
 
+
 def create(title, topic):
     try:
         sql = " ".join(("INSERT INTO exercises (title, topic, created_at, visible)",
