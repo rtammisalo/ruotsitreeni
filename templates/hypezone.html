@@ -3,7 +3,7 @@
     <div class="overflow-auto mt-3 mb-2 bg-light d-flex flex-column-reverse" style="height: 25em">
         <ul class="list-group list-group-flush">
             {% for message in messages %}
-            <li class="list-group-item">{{ message.content }}</li>
+            <li class="list-group-item">{{ message.username }}: {{ message.content }}</li>
             {% endfor %}
             {% if not messages %}
             <li class="list-group-item">Ei vielä viestejä.</li>

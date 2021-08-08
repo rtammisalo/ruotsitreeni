@@ -2,8 +2,9 @@ from db import db
 
 
 def get_last_messages(message_count):
-    sql = " ".join(("SELECT user_id, created_at, content",
+    sql = " ".join(("SELECT users.username as username, created_at, content",
                     "FROM messages",
+                    "LEFT JOIN users ON user_id = users.id",
                     "ORDER BY created_at DESC",
                     "LIMIT :message_count"))
     messages = db.session.execute(
