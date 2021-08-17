@@ -1,7 +1,7 @@
 from flask_init import app
 import config
 import users
-import routes  # pylint: disable=unused-import
+import routes # pylint: disable=unused-import
 
 if not config.config_file_found():
     print("Error: Couldn't find config file.")
