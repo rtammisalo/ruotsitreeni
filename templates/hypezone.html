@@ -10,11 +10,37 @@
             {% endif %}
         </ul>
     </div>
-    <form action="/message/post" method="POST">
+    <form class="needs-validation" action="/message/post" method="POST" novalidate>
         <div class="form-group mb-2">
-            <textarea class="form-control" id="inputMessage" name="inputMessage" rows="2" placeholder="Kirjoita viesti tähän"></textarea>
+            <textarea rows="2" class="form-control" id="inputMessage" name="inputMessage" minlength="1" maxlength="100"
+                placeholder="Kirjoita viesti tähän" required></textarea>
         </div>
-        <button type="submit" class="btn btn-primary">Lähetä viesti</button>
+        <button type="submit" class="btn btn-primary" id="sendMessage">Lähetä viesti</button>
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     </form>
 </div>
+
+
+<script type="text/javascript" src="/static/validation.js"></script>
+<script type="text/javascript">
+    const inputMessage = document.getElementById("inputMessage");
+
+    inputMessage.addEventListener("input", function (event) {
+        let message = inputMessage.value;
+
+        if (message.match("^\\s*$")) {
+            inputMessage.value = ""
+            inputMessage.setCustomValidity("Kirjoita jotain viestiin esin.")
+        } else {
+            inputMessage.setCustomValidity("")
+        }
+    });
+
+    inputMessage.addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            // Prevent normal enter use in input.
+            event.preventDefault();
+            document.getElementById("sendMessage").click();
+        }
+    });
+</script>
