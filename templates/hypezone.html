@@ -1,6 +1,38 @@
 <div class="border border-info rounded m-2 p-1">
     <h3 class="text-center">HypeZone</h3>
+    {% if admin %}
+    {% if delete_message %}
+    <div class="alert alert-warning text-break" role="alert">
+        Poista viesti?
+        <hr>
+        {{ delete_message.username }}: {{ delete_message.content }}
+        <hr>
+        <a href="/message/delete_confirm/{{ delete_message.id }}" class="btn btn-info btn-danger"
+            role="button">Poista</a>
+        <a href="/" class="btn btn-info" role="button">Peru</a>
+    </div>
+    {% endif %}
+    {% endif %}
     <div class="overflow-auto mt-3 mb-2 bg-light d-flex flex-column-reverse text-break" style="height: 25em">
+        {% if admin %}
+        <ul class="list-group list-group-flush">
+        {% for message in messages %}
+        {% if not message.visible %}
+        {% set message_deleted = "disabled" %}
+        {% endif %}
+
+        <li class="list-group-item p-0 border-0">
+            <a href="/message/delete_ask/{{ message.id }}"
+                class="list-group-item list-group-item-action {{ message_deleted }}">
+                {{ message.username }}: {{ message.content }}
+                {% if message_deleted %}
+                <span class="badge badge-secondary badge-pill">Poistettu</span>
+                {% endif %}
+            </a>
+        </li>
+        {% endfor %}
+        </ul>
+        {% else %}
         <ul class="list-group list-group-flush">
             {% for message in messages %}
             <li class="list-group-item">{{ message.username }}: {{ message.content }}</li>
@@ -9,7 +41,13 @@
             <li class="list-group-item">Ei vielä viestejä.</li>
             {% endif %}
         </ul>
+        {% endif %}
     </div>
+    {% if admin %}
+    <div class="mb-2 p-1 border border-1">
+        <small class="text-muted">Voit poistaa viestejä klikkaamalla niitä. Poistetut viestit eivät näy tavallisille käyttäjille. </small>
+    </div>
+    {% endif %}
     <form class="needs-validation" action="/message/post" method="POST" novalidate>
         <div class="form-group mb-2">
             <textarea rows="2" class="form-control" id="inputMessage" name="inputMessage" minlength="1" maxlength="100"

@@ -39,5 +39,6 @@ CREATE TABLE messages (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users,
     created_at TIMESTAMP,
-    content TEXT
+    content TEXT,
+    visible BOOLEAN
 );

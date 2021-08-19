@@ -3,6 +3,7 @@ from flask_init import app
 import users
 import exercises
 import words
+import messages
 
 
 class Error:
@@ -38,6 +39,11 @@ def render_login(error=None):
 
 def render_create_user(error=None):
     return render_template("create_user.html", password_pattern=users.PASSWORD_REGEX, error=error)
+
+
+def render_main_view(**kwargs):
+    return render_user_template("index.html", exercises=exercises.get_exercises(),
+                                messages=messages.get_last_messages(50, users.is_admin()), **kwargs)
 
 
 def render_user_template(template, **kwargs):
