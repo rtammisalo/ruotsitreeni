@@ -1,0 +1,7 @@
+{% if error %}
+<div class="alert alert-danger mt-2" role="alert">
+    {% for msg in error.get_all() %}
+    {{ msg }}<br>
+    {% endfor %}
+</div>
+{% endif %}

@@ -8,6 +8,7 @@ from db import db
 
 ADMIN_ACCOUNT_TYPE = 0
 USER_ACCOUNT_TYPE = 1
+PASSWORD_REGEX = "^(\w|[^\w ]){6,20}$"
 
 
 class LoginUserError(Exception):
@@ -81,38 +82,40 @@ def is_admin():
     return False
 
 
-def check_username(username):
+def validate_username(username):
     user = get_user_data(username)
 
     if user:
-        raise CreateUserError("Virhe: kyseinen käyttäjänimi on jo olemassa.")
+        return "Käyttäjänimi on jo olemassa."
 
     if len(username) < 3:
-        raise CreateUserError("Virhe: käyttäjänimi on liian lyhyt.")
+        return "Käyttäjänimi on liian lyhyt."
 
     if len(username) > 12:
-        raise CreateUserError("Virhe: käyttäjänimi on liian pitkä.")
+        return "Käyttäjänimi on liian pitkä."
 
     if not username.isalnum():
-        raise CreateUserError("Virhe: käyttäjänimi sisältää vääriä merkkejä.")
+        return "Käyttäjänimi sisältää vääriä merkkejä."
+
+    return None
 
 
-def check_password(password):
+def validate_password(password):
 
     if len(password) < 6:
-        raise CreateUserError("Virhe: salasana on liian lyhyt.")
+        return "Salasana on liian lyhyt."
 
     if len(password) > 20:
-        raise CreateUserError("Virhe: salasana on liian pitkä.")
+        return "Salasana on liian pitkä."
 
-    regexp = f"^[a-zA-Z0-9{string.punctuation}]+$"
-    if not re.search(regexp, password):
-        raise CreateUserError("Virhe: salasana sisältää vääriä merkkejä.")
+    if not re.search(PASSWORD_REGEX, password):
+        print(password)
+        return "Salasana sisältää vääriä merkkejä."
+
+    return None
 
 
 def create(username, password, account_type=USER_ACCOUNT_TYPE, auto_login=True):
-    check_username(username)
-    check_password(password)
 
     try:
         # Use join method when constructing SQL queries in order to

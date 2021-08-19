@@ -4,28 +4,27 @@
 <div class="row no-gutters justify-content-between">
     <div class="col-7">
         <h3>Lisää uusi sana:</h3>
-        {% if error %}
-            <div class="alert alert-danger mt-2" role="alert">
-                {{ error }}
-            </div>
-        {% endif %}
-        <form action="/exercise/{{ exercise.id }}/word/new" method="POST" enctype="multipart/form-data">
+        {% include "error_alert.html" %}
+        <form class="needs-validation" action="/exercise/{{ exercise.id }}/word/new" method="POST" enctype="multipart/form-data" novalidate>
             <div class="form-group mt-2">
                 <label for="inputFinnishWord">Sana suomeksi:</label>
-                <input type="text" class="form-control" id="inputFinnishWord" name="inputFinnishWord">
+                <input type="text" class="form-control" id="inputFinnishWord" name="inputFinnishWord" required>
+                <div class="invalid-feedback" id="invalidInputFinnishWord">Suomenkielinen sana puuttuu.</div>
             </div>
             <div class="form-group mt-2">
                 <label for="inputSwedishWord">Sana ruotsiksi:</label>
-                <input type="text" class="form-control" id="inputSwedishWord" name="inputSwedishWord">
+                <input type="text" class="form-control" id="inputSwedishWord" name="inputSwedishWord" required>
+                <div class="invalid-feedback" id="invalidInputSwedishWord">Ruotsinkielinen sana puuttuu.</div>
             </div>
             <div class="form-group mt-2">
                 <label for="inputMultipleChoice">Monivalinnan väärät vastaukset:</label>
                 <textarea class="form-control" id="inputMultipleChoice" name="inputMultipleChoice" rows="5"  aria-describedby="multipleChoiceHelp"></textarea>
-                <small id="multipleChoiceHelp" class="form-text text-muted">Sanojen tulee olla jokainen omalla rivillään. Max. 20 sanaa. Jos et anna sanoja, niin järjestelmä arpoo niitä vastausvaihtoehdoiksi.</small>
+                <small id="multipleChoiceHelp" class="form-text text-muted">Sanojen tulee olla jokainen omalla rivillään. Sovellus hyväksyy 20 ensimmäistä sanaa. Jos et anna sanoja, niin järjestelmä arpoo niitä vastausvaihtoehdoiksi.</small>
             </div>
             <div class="form-group mt-2">
                 <label for="inputImage">Liitä kuva:</label>
-                <input type="file" class="form-control-file" id="inputImage" name="inputImage">
+                <input type="file" class="form-control-file" id="inputImage" name="inputImage" accept="image/jpeg" required>
+                <div class="invalid-feedback" id="invalidInputImage">Kuvatiedosto ei saa puuttua ja sen tulee olla .jpg-päätteinen.</div>
             </div>
             <button type="submit" class="btn btn-primary">Lisää sana</button>
             <input type="hidden" name="exercise_id" value="{{ exercise.id }}">
@@ -67,4 +66,7 @@
         </div>
     </div>
 </div>
+
+
+<script type="text/javascript" src="/static/validation.js"></script>
 {% endblock %}

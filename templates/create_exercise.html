@@ -4,14 +4,15 @@
 <h3>Luo uusi harjoitus</h3>
 <hr>
 {% if error %}
-    <div class="alert alert-danger mt-2" role="alert">
-            {{ error }}
-    </div>
+<div class="alert alert-danger mt-2" role="alert">
+    {{ error }}
+</div>
 {% endif %}
 <form action="/exercise/new" method="POST">
     <div class="form-group mt-2">
         <label for="inputExerciseTitle">Harjoituksen nimi:</label>
-        <input type="text" class="form-control" id="inputExerciseTitle" name="inputExerciseTitle" aria-describedby="exerciseTitleHelp">
+        <input type="text" class="form-control" id="inputExerciseTitle" name="inputExerciseTitle"
+            aria-describedby="exerciseTitleHelp">
         <small id="exerciseTitleHelp" class="form-text text-muted">Nimen tulee olla lyhyt, ytimekäs ja uniikki.</small>
     </div>
     <div class="form-group">
@@ -25,7 +26,7 @@
             <a class="btn btn-primary" href="/" role="button">Takaisin</a>
         </div>
     </div>
-    
+
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
 {% endblock %}

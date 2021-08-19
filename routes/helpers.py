@@ -5,6 +5,24 @@ import exercises
 import words
 
 
+class Error:
+    def __init__(self):
+        self._messages = {}
+
+    def add(self, error_type, error_message):
+        if error_message:
+            self._messages[error_type] = error_message
+
+    def get(self, error_type):
+        return self._messages.get(error_type, None)
+
+    def get_all(self):
+        return list(self._messages.values())
+
+    def empty(self):
+        return len(self._messages) == 0
+
+
 @app.route("/image/<int:word_id>")
 def show_image(word_id):
     image_data = words.get_word(word_id).image_data
@@ -19,7 +37,7 @@ def render_login(error=None):
 
 
 def render_create_user(error=None):
-    return render_template("create_user.html", error=error)
+    return render_template("create_user.html", password_pattern=users.PASSWORD_REGEX, error=error)
 
 
 def render_user_template(template, **kwargs):

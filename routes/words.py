@@ -44,24 +44,24 @@ def create_word(exercise_id):
     image_file = request.files["inputImage"]
     image_data = image_file.read()
     filename = image_file.filename
-    error_msg = ""
+    error = helpers.Error()
 
     if not finnish_word:
-        error_msg = "Virhe: suomenkielinen sana puuttuu."
+        error.add("inputFinnishWord", "Suomenkielinen sana puuttuu.")
 
     if not swedish_word:
-        error_msg = "Virhe: ruotsinkielinen sana puuttuu."
+        error.add("inputSwedishWord", "Ruotsinkielinen sana puuttuu.")
 
     if not image_file or not filename.endswith((".jpg")):
-        error_msg = "Virhe: tiedosto ei ole tyyppiä jpg."
+        error.add("inputFile", "Tiedosto ei ole tyyppiä jpg.")
 
     if len(image_data) > 150 * 1024:
-        error_msg = "Virhe: tiedosto on suurempi kuin 150 kB."
+        error.add("inputFileSize", "Tiedosto on suurempi kuin 150 kB.")
 
-    if error_msg:
+    if not error.empty():
         return helpers.render_user_template("word.html", exercise=exercise,
                                             words=words.get_words(exercise_id),
-                                            error=error_msg)
+                                            error=error)
 
     choices = request.form["inputMultipleChoice"].splitlines()
     word_id = words.add_word(exercise_id, finnish_word,

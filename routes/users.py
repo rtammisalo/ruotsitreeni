@@ -32,6 +32,15 @@ def create_user():
         username = request.form["inputUsername"]
         password = request.form["inputPassword"]
 
+        username_error = users.validate_username(username)
+        password_error = users.validate_password(password)
+
+        if username_error or password_error:
+            error = helpers.Error()
+            error.add("inputUsername", username_error)
+            error.add("inputPassword", password_error)
+            return helpers.render_create_user(error)
+
         users.create(username, password)
     except users.CreateUserError as err:
         return helpers.render_create_user(err)
