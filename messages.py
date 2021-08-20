@@ -2,7 +2,8 @@ from db import db
 
 
 def get_last_messages(message_count, show_invisible):
-    sql = " ".join(("SELECT messages.id as id, users.username as username, created_at, content, messages.visible as visible",
+    sql = " ".join(("SELECT messages.id as id, users.username as username,",
+                    "messages.created_at as created_at, content, messages.visible as visible",
                     "FROM messages",
                     "LEFT JOIN users ON user_id = users.id"))
 
@@ -11,7 +12,7 @@ def get_last_messages(message_count, show_invisible):
 
     sql = " ".join((sql, "ORDER BY created_at DESC",
                     "LIMIT :message_count"))
-                    
+
     messages = db.session.execute(
         sql, {"message_count": message_count}).fetchall()
     messages.reverse()
@@ -35,7 +36,8 @@ def delete_message(message_id):
 
 
 def get_message(message_id):
-    sql = " ".join(("SELECT messages.id as id, users.username as username, created_at, content, messages.visible as visible",
+    sql = " ".join(("SELECT messages.id as id, users.username as username,",
+                    "messages.created_at as created_at, content, messages.visible as visible",
                     "FROM messages",
                     "LEFT JOIN users ON user_id = users.id",
                     "WHERE messages.id = :message_id"))
