@@ -31,14 +31,20 @@ def create_user():
     try:
         username = request.form["inputUsername"]
         password = request.form["inputPassword"]
+        password_again = request.form["inputPasswordAgain"]
+
+        password_mismatch_error = ""
+        if password != password_again:
+            password_mismatch_error = "Annetut salasanat eivät täsmää."
 
         username_error = users.validate_username(username)
         password_error = users.validate_password(password)
 
-        if username_error or password_error:
+        if username_error or password_error or password_mismatch_error:
             error = helpers.Error()
             error.add("inputUsername", username_error)
             error.add("inputPassword", password_error)
+            error.add("inputPasswordAgain", password_mismatch_error)
             return helpers.render_create_user(error)
 
         users.create(username, password)

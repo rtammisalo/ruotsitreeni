@@ -1,17 +1,28 @@
-
 <form class="needs-validation" action="{{ form_action }}" method="POST" novalidate>
+    {% if input_user %}
     <div class="form-group mt-2">
         <label for="inputUsername">Käyttäjätunnus:</label>
-        <input type="text" class="form-control" id="inputUsername" name="inputUsername" minlength="3" maxlength="12" pattern="[\p{L}\d]*" aria-describedby="usernameHelp" required>
+        <input type="text" class="form-control" id="inputUsername" name="inputUsername" minlength="3" maxlength="12"
+            pattern="[\p{L}\d]*" aria-describedby="usernameHelp" required>
         <div class="invalid-feedback" id="invalidInputUsername"></div>
         <small id="usernameHelp" class="form-text text-muted">{{ username_help }}</small>
     </div>
+    {% endif %}
     <div class="form-group">
         <label for="inputPassword">Salasana:</label>
-        <input type="password" class="form-control" id="inputPassword" name="inputPassword" minlength="6" maxlength="20" pattern="(\p{L}|[^\p{L} ])*" aria-describedby="passwordHelp" required>
+        <input type="password" class="form-control" id="inputPassword" name="inputPassword" minlength="6" maxlength="20"
+            pattern="(\p{L}|[^\p{L} ])*" aria-describedby="passwordHelp" required>
         <div class="invalid-feedback" id="invalidInputPassword"></div>
         <small id="passwordHelp" class="form-text text-muted">{{ password_help }}</small>
     </div>
+    {% if create_password %}
+    <div class="form-group">
+        <label for="inputPasswordAgain">Anna sama salasana uudestaan:</label>
+        <input type="password" class="form-control" id="inputPasswordAgain" name="inputPasswordAgain" maxlength="20"
+            required>
+        <div class="invalid-feedback" id="invalidInputPasswordAgain"></div>
+    </div>
+    {% endif %}
     <button type="submit" class="btn btn-primary">{{ user_form_action_button }}</button>
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
@@ -19,37 +30,52 @@
 {% if validate_form %}
 <script type="text/javascript" src="/static/validation.js"></script>
 <script type="text/javascript">
-const username = document.getElementById("inputUsername");
+    const username = document.getElementById("inputUsername");
 
-username.addEventListener("input", function (event) {
-    let error_message = "";
+    username.addEventListener("input", function (event) {
+        let error_message = "";
 
-    if (username.validity.tooShort) {
-        error_message += "Käyttäjänimi on liian lyhyt. ";
-    }
+        if (username.validity.tooShort) {
+            error_message += "Käyttäjänimi on liian lyhyt. ";
+        }
 
-    if (username.validity.patternMismatch) {
-        error_message += "Käyttäjänimi sisältää vääriä merkkejä.";
-    }
+        if (username.validity.patternMismatch) {
+            error_message += "Käyttäjänimi sisältää vääriä merkkejä.";
+        }
 
-    document.getElementById("invalidInputUsername").innerHTML = error_message;
-});
+        document.getElementById("invalidInputUsername").innerHTML = error_message;
+    });
 
 
-const password = document.getElementById("inputPassword");
+    const password = document.getElementById("inputPassword");
 
-password.addEventListener("input", function (event) {
-    let error_message = "";
+    password.addEventListener("input", function (event) {
+        let error_message = "";
 
-    if (password.validity.tooShort) {
-        error_message += "Salasana on liian lyhyt. ";
-    }
+        if (password.validity.tooShort) {
+            error_message += "Salasana on liian lyhyt. ";
+        }
 
-    if (password.validity.patternMismatch) {
-        error_message += "Salasana sisältää vääriä merkkejä.";
-    }
+        if (password.validity.patternMismatch) {
+            error_message += "Salasana sisältää vääriä merkkejä.";
+        }
 
-    document.getElementById("invalidInputPassword").innerHTML = error_message;
-});
+        document.getElementById("invalidInputPassword").innerHTML = error_message;
+    });
+
+    const passwordAgain = document.getElementById("inputPasswordAgain");
+
+    passwordAgain.addEventListener("input", function (event) {
+        let error_message = "";
+
+        if (passwordAgain.value !== password.value) {
+            error_message = "Salasanat eivät ole samat.";
+            passwordAgain.setCustomValidity(error_message);
+        } else {
+            passwordAgain.setCustomValidity("")
+        }
+
+        document.getElementById("invalidInputPasswordAgain").innerHTML = error_message;
+    });
 </script>
 {% endif %}

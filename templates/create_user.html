@@ -12,11 +12,13 @@
         {% include "error_alert.html" %}
         {% set user_form_action_button = "Luo uusi käyttäjätili" %}
         {% set form_action = "/create_user" %}
-        {% set validate_form = "True" %}
+        {% set validate_form = True %}
         {% set username_help = "Käyttäjätunnus tulee olla 3 - 12 merkkiä pitkä ja voi sisältää kirjaimia ja numeroita."
         %}
         {% set password_help = "Salasanan tulee olla 6-20 merkkiä pitkä ja voi sisältää kirjaimia, erikoismerkkejä ja
         numeroita." %}
+        {% set input_user = True %}
+        {% set create_password = True %}
         {% include "user_form.html" %}
     </div>
 </div>
