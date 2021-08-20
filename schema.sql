@@ -3,7 +3,8 @@ CREATE TABLE users (
     username TEXT UNIQUE,
     password_hash TEXT,
     account_type INTEGER,
-    visible BOOLEAN
+    visible BOOLEAN,
+    created_at TIMESTAMP
 );
 
 CREATE TABLE exercises (

@@ -24,7 +24,7 @@ class UserValidationError(Exception):
 
 
 def get_user_data(username):
-    sql = " ".join(("SELECT id, password_hash, account_type",
+    sql = " ".join(("SELECT id, password_hash, account_type, created_at",
                     "FROM users",
                     "WHERE username=:username AND visible=TRUE"))
     return db.session.execute(sql, {"username": username}).fetchone()
@@ -120,8 +120,8 @@ def create(username, password, account_type=USER_ACCOUNT_TYPE, auto_login=True):
     try:
         # Use join method when constructing SQL queries in order to
         # avoid missing whitespaces.
-        sql = " ".join(("INSERT INTO users (username, password_hash, account_type, visible)",
-                        "VALUES (:username, :password_hash, :account_type, TRUE)"))
+        sql = " ".join(("INSERT INTO users (username, password_hash, account_type, visible, created_at)",
+                        "VALUES (:username, :password_hash, :account_type, TRUE, NOW())"))
         db.session.execute(sql, {"username": username, "password_hash": generate_password_hash(
             password), "account_type": account_type})
         db.session.commit()
