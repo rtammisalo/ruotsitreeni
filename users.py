@@ -1,6 +1,5 @@
 import secrets
 import re
-import string
 from flask import session
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -8,10 +7,10 @@ from db import db
 
 ADMIN_ACCOUNT_TYPE = 0
 USER_ACCOUNT_TYPE = 1
-PASSWORD_REGEX = "^(\w|[^\w ]){6,20}$"
+PASSWORD_REGEX = r"^(\w|[^\w ]){6,20}$"
 
 
-class LoginUserError(Exception):
+class UserCredentialsError(Exception):
     pass
 
 
@@ -24,20 +23,43 @@ class UserValidationError(Exception):
 
 
 def get_user_data(username):
-    sql = " ".join(("SELECT id, password_hash, account_type, created_at",
+    sql = " ".join(("SELECT id, username, password_hash, account_type, created_at",
                     "FROM users",
                     "WHERE username=:username AND visible=TRUE"))
     return db.session.execute(sql, {"username": username}).fetchone()
 
 
+def get_user_data_by_id(user_id):
+    sql = " ".join(("SELECT id, username, password_hash, account_type, created_at",
+                    "FROM users",
+                    "WHERE id=:user_id AND visible=TRUE"))
+    return db.session.execute(sql, {"user_id": user_id}).fetchone()
+
+
+def check_user_password(user_data, password):
+    if not user_data:
+        raise UserCredentialsError(
+            "Virhe: kyseistä käyttäjänimeä ei ole olemassa.")
+
+    if not check_password_hash(user_data["password_hash"], password):
+        raise UserCredentialsError("Virhe: käyttäjänimi/salasana on väärin.")
+
+
+def change_user_password_by_id(user_id, new_password):
+    try:
+        sql = "UPDATE users SET password_hash = :password_hash WHERE id = :user_id"
+        db.session.execute(
+            sql, {"password_hash": generate_password_hash(new_password), "user_id": user_id})
+        db.session.commit()
+    except SQLAlchemyError as err:
+        raise UserCredentialsError(
+            "Virhe: Salasanan vaihto epäonnistui.") from err
+
+
 def login(username, password):
     user = get_user_data(username)
 
-    if not user:
-        raise LoginUserError("Virhe: kyseistä käyttäjänimeä ei ole olemassa.")
-
-    if not check_password_hash(user["password_hash"], password):
-        raise LoginUserError("Virhe: käyttäjänimi/salasana on väärin.")
+    check_user_password(user, password)
 
     session["username"] = username
     session["user_id"] = user["id"]
@@ -65,6 +87,10 @@ def validate_user(csrf_token, admin_required=False):
 
 def get_logged_user_id():
     return session.get("user_id", None)
+
+
+def get_username():
+    return session.get("username", None)
 
 
 def get_csrf_token():
@@ -120,7 +146,8 @@ def create(username, password, account_type=USER_ACCOUNT_TYPE, auto_login=True):
     try:
         # Use join method when constructing SQL queries in order to
         # avoid missing whitespaces.
-        sql = " ".join(("INSERT INTO users (username, password_hash, account_type, visible, created_at)",
+        sql = " ".join(("INSERT INTO users (username, password_hash,",
+                        "account_type, visible, created_at)",
                         "VALUES (:username, :password_hash, :account_type, TRUE, NOW())"))
         db.session.execute(sql, {"username": username, "password_hash": generate_password_hash(
             password), "account_type": account_type})

@@ -8,6 +8,14 @@
         <small id="usernameHelp" class="form-text text-muted">{{ username_help }}</small>
     </div>
     {% endif %}
+    {% if change_password %}
+    <div class="form-group">
+        <label for="inputOldPassword">Vanha salasana:</label>
+        <input type="password" class="form-control" id="inputOldPassword" name="inputOldPassword" minlength="6"
+            maxlength="20" pattern="(\p{L}|[^\p{L} ])*" aria-describedby="passwordHelp" required>
+        <div class="invalid-feedback" id="invalidInputOldPassword"></div>
+    </div>
+    {% endif %}
     <div class="form-group">
         <label for="inputPassword">Salasana:</label>
         <input type="password" class="form-control" id="inputPassword" name="inputPassword" minlength="6" maxlength="20"
@@ -32,50 +40,55 @@
 <script type="text/javascript">
     const username = document.getElementById("inputUsername");
 
-    username.addEventListener("input", function (event) {
-        let error_message = "";
+    if (username) {
+        username.addEventListener("input", function (event) {
+            let error_message = "";
 
-        if (username.validity.tooShort) {
-            error_message += "Käyttäjänimi on liian lyhyt. ";
-        }
+            if (username.validity.tooShort) {
+                error_message += "Käyttäjänimi on liian lyhyt. ";
+            }
 
-        if (username.validity.patternMismatch) {
-            error_message += "Käyttäjänimi sisältää vääriä merkkejä.";
-        }
+            if (username.validity.patternMismatch) {
+                error_message += "Käyttäjänimi sisältää vääriä merkkejä.";
+            }
 
-        document.getElementById("invalidInputUsername").innerHTML = error_message;
-    });
-
+            document.getElementById("invalidInputUsername").innerHTML = error_message;
+        });
+    }
 
     const password = document.getElementById("inputPassword");
 
-    password.addEventListener("input", function (event) {
-        let error_message = "";
+    if (password) {
+        password.addEventListener("input", function (event) {
+            let error_message = "";
 
-        if (password.validity.tooShort) {
-            error_message += "Salasana on liian lyhyt. ";
-        }
+            if (password.validity.tooShort) {
+                error_message += "Salasana on liian lyhyt. ";
+            }
 
-        if (password.validity.patternMismatch) {
-            error_message += "Salasana sisältää vääriä merkkejä.";
-        }
+            if (password.validity.patternMismatch) {
+                error_message += "Salasana sisältää vääriä merkkejä.";
+            }
 
-        document.getElementById("invalidInputPassword").innerHTML = error_message;
-    });
+            document.getElementById("invalidInputPassword").innerHTML = error_message;
+        });
+    }
 
     const passwordAgain = document.getElementById("inputPasswordAgain");
 
-    passwordAgain.addEventListener("input", function (event) {
-        let error_message = "";
+    if (passwordAgain) {
+        passwordAgain.addEventListener("input", function (event) {
+            let error_message = "";
 
-        if (passwordAgain.value !== password.value) {
-            error_message = "Salasanat eivät ole samat.";
-            passwordAgain.setCustomValidity(error_message);
-        } else {
-            passwordAgain.setCustomValidity("")
-        }
+            if (passwordAgain.value !== password.value) {
+                error_message = "Salasanat eivät ole samat.";
+                passwordAgain.setCustomValidity(error_message);
+            } else {
+                passwordAgain.setCustomValidity("")
+            }
 
-        document.getElementById("invalidInputPasswordAgain").innerHTML = error_message;
-    });
+            document.getElementById("invalidInputPasswordAgain").innerHTML = error_message;
+        });
+    }
 </script>
 {% endif %}

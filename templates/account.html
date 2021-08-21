@@ -1,0 +1,86 @@
+{% extends "layout.html" %}
+{% block title %}Tilinhallinta{% endblock %}
+{% block page_content %}
+<div class="row no-gutters justify-content-between">
+    <div class="col-8 text-center pr-4">
+        <h3 class="pb-2">Käyttäjätilin tiedot</h3>
+        <table class="table text-left">
+            <thead></thead>
+            <tbody>
+                <tr>
+                    <th scope="row" class="col-4">Käyttäjätili</th>
+                    <td class="col-8">{{ selected_user.username }}</td>
+                </tr>
+
+                
+                <tr>
+                    <th scope="row" class="col-4">Tilityyppi</th>
+                    <td class="col-8">
+                        {% if selected_user.account_type == 0 %} 
+                        Ylläpito
+                        {% else %}
+                        Käyttäjä
+                        {% endif %}
+                    </td>
+                </tr>
+
+                <tr>
+                    <th scope="row" class="col-4">Luotu</th>
+                    <td class="col-8">{{ selected_user.created_at.strftime("%d-%m-%Y") }}</td>
+                </tr>
+
+                <tr>
+                    <th scope="row" class="col-4">Oikeat vastaukset</th>
+                    <td class="col-8">{{ answers.correct }}</td>
+                </tr>
+
+                <tr>
+                    <th scope="row" class="col-4">Oikeat vastaukset %</th>
+                    <td class="col-8">{{ "%0.2f" | format(answers.correct_percent) }}</td>
+                </tr>
+
+                <tr>
+                    <th scope="row" class="col-4">Väärät vastaukset</th>
+                    <td class="col-8">{{ answers.wrong }}</td>
+                </tr>
+
+                <tr>
+                    <th scope="row" class="col-4">Väärät vastaukset %</th>
+                    <td class="col-8">{{ "%0.2f" | format(answers.wrong_percent) }}</td>
+                </tr>
+
+                <tr>
+                    <th scope="row" class="col-4">Kaikki vastaukset</th>
+                    <td class="col-8">{{ answers.all }}</td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+    <div class="col-4 bg-light rounded p-2">
+        <div class="col-12 text-center">
+            {% if message %}
+            <div class="alert alert-info mt-2" role="alert">
+                {{ message }}
+            </div>
+            {% endif %}
+            <h4>Vaihda salasanaa:</h4>
+            {% include "error_alert.html" %}
+            {% set user_form_action_button = "Vaihda salasana" %}
+            {% set form_action = "/account/{}/change_password".format(selected_user.id) %}
+            {% set validate_form = True %}
+            {% set password_help = "Salasanan tulee olla 6-20 merkkiä pitkä ja voi sisältää kirjaimia, erikoismerkkejä
+            ja
+            numeroita." %}
+            {% set input_user = False %}
+            {% set change_password = True %}
+            {% set create_password = True %}
+            {% include "user_form.html" %}
+        </div>
+        <hr>
+        <div class="col-12 text-center">
+            <a class="btn btn-primary mb-2 w-75" href="/" role="button">Takaisin</a><br>
+        </div>
+    </div>
+</div>
+{% endblock %}

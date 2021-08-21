@@ -1,10 +1,12 @@
 from flask import redirect, request
+from flask.templating import render_template
 from flask_init import app
 from routes import helpers
 import users
+import answers
 
 
-@ app.route("/login", methods=["POST"])
+@app.route("/login", methods=["POST"])
 def login():
     if users.get_logged_user_id():
         return redirect("/")
@@ -14,13 +16,13 @@ def login():
 
     try:
         users.login(username, password)
-    except users.LoginUserError as err:
+    except users.UserCredentialsError as err:
         return helpers.render_login(error=err)
 
     return redirect("/")
 
 
-@ app.route("/create_user", methods=["POST", "GET"])
+@app.route("/create_user", methods=["POST", "GET"])
 def create_user():
     if users.get_logged_user_id():
         return redirect("/")
@@ -54,9 +56,46 @@ def create_user():
     return redirect("/")
 
 
-@ app.route("/logout")
+@app.route("/logout")
 def logout_user():
     if users.get_logged_user_id():
         users.logout()
 
     return redirect("/")
+
+
+@app.route("/account/<int:user_id>")
+def show_account(user_id, error=None, message=None):
+    helpers.abort_invalid_user(user_id)
+
+    user = users.get_user_data_by_id(user_id)
+
+    if user:
+        stats = answers.get_user_statistics(user_id)
+        kwargs = {"selected_user": user, "answers": stats,
+                  "error": error, "message": message}
+        return helpers.render_user_template("account.html", **kwargs)
+
+    helpers.abort(404)
+
+
+@app.route("/account/<int:user_id>/change_password", methods=["POST"])
+def change_password(user_id):
+    helpers.abort_invalid_user(user_id)
+
+    try:
+        old_password = request.form["inputOldPassword"]
+        password = request.form["inputPassword"]
+        password_again = request.form["inputPasswordAgain"]
+
+        validator = helpers.Validator()
+        validator.check_repeat_password(password, password_again)
+        validator.check_user_password_by_id(user_id, old_password)
+
+        if not validator.error.empty():
+            return show_account(user_id, error=validator.error)
+
+        users.change_user_password_by_id(user_id, password)
+        return show_account(user_id, message="Salasana vaihdettu.")
+    except users.UserCredentialsError:
+        return redirect("/")

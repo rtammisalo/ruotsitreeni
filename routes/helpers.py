@@ -24,6 +24,24 @@ class Error:
         return len(self._messages) == 0
 
 
+class Validator:
+    def __init__(self):
+        self.error = Error()
+    
+    def check_repeat_password(self, password, password_again):
+        if password != password_again:
+            self.error.add("inputPasswordAgain", "Salasanat eivät ole samat.")
+    
+    def check_user_password_by_id(self, user_id, password):
+        user = users.get_user_data_by_id(user_id)
+        
+        try:
+            users.check_user_password(user, password)
+        except users.UserCredentialsError as err:
+            self.error.add("inputPassword", err.__str__())
+
+
+
 @app.route("/image/<int:word_id>")
 def show_image(word_id):
     image_data = words.get_word(word_id).image_data
@@ -48,6 +66,7 @@ def render_main_view(**kwargs):
 
 def render_user_template(template, **kwargs):
     kwargs["user_id"] = users.get_logged_user_id()
+    kwargs["username"] = users.get_username()
     kwargs["admin"] = users.is_admin()
     return render_template(template, **kwargs)
 
@@ -69,6 +88,9 @@ def abort_non_admin():
     if not users.is_admin():
         abort(403)
 
+def abort_invalid_user(correct_user_id):
+    if users.get_logged_user_id() != correct_user_id and not users.is_admin():
+        abort(403)
 
 def get_exercise_or_abort(exercise_id):
     # Handle aborts in routes module
