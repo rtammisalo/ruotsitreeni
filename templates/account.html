@@ -11,7 +11,6 @@
                     <th scope="row" class="col-4">Käyttäjätili</th>
                     <td class="col-8">{{ selected_user.username }}</td>
                 </tr>
-
                 
                 <tr>
                     <th scope="row" class="col-4">Tilityyppi</th>
@@ -79,6 +78,9 @@
         </div>
         <hr>
         <div class="col-12 text-center">
+            {% if (not admin and user_id == selected_user.id) or (admin and user_id != selected_user.id) %}
+            <a class="btn btn-danger mb-2 w-75" href="/account/{{ selected_user.id }}/delete" role="button">Poista käyttäjätili</a><br>
+            {% endif %}
             <a class="btn btn-primary mb-2 w-75" href="/" role="button">Takaisin</a><br>
         </div>
     </div>

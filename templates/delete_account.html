@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% block title %}Tilinhallinta - Poista tili{% endblock %}
+{% block page_content %}
+<div class="row no-gutters justify-content-center">
+    <div class="col-6 text-center pt-5">
+        {% if message %}
+        <div class="alert alert-info mt-2" role="alert">
+            {{ message }}
+        </div>
+        {% if admin %}
+        <a class="btn btn-primary mb-2 w-75" href="/account/{{ user_id }}" role="button">Takaisin käyttäjätilin
+            hallintaan</a><br>
+        {% else %}
+        <a class="btn btn-primary mb-2 w-75" href="/" role="button">Takaisin pääsivulle</a><br>
+        {% endif %}
+
+        {% else %}
+
+        <h3>Poista käyttäjätili</h3>
+        <p>Poista tili <b>{{ selected_user.username }}</b> käytöstä? Poisto on pysyvä, eikä sitä voi perua. </p>
+
+        {% if not admin %}
+        <p>Kirjoita salasanasi varmennukseksi:</p>
+        {% include "error_alert.html" %}
+        {% set user_form_action_button = "Poista käyttäjätili" %}
+        {% set form_action = "/account/{}/delete".format(selected_user.id) %}
+        {% set validate_form = False %}
+        {% set input_user = False %}
+        {% set change_password = False %}
+        {% set create_password = False %}
+        {% include "user_form.html" %}
+
+        {% else %}
+        <form action="/account/{{ selected_user.id }}/delete" method="POST">
+            <button type="submit" class="btn btn-danger mb-2 w-75">Poista käyttäjätili</button>
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+        </form>
+        {% endif %}
+
+        <hr>
+        <a class="btn btn-primary mb-2 w-75" href="/account/{{ selected_user.id }}" role="button">Takaisin käyttäjätilin
+            hallintaan</a><br>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

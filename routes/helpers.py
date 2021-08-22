@@ -40,6 +40,8 @@ class Validator:
         except users.UserCredentialsError as err:
             self.error.add("inputPassword", err.__str__())
 
+    def check_user_password(self, password):
+        self.check_user_password_by_id(users.get_logged_user_id(), password)
 
 
 @app.route("/image/<int:word_id>")

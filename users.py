@@ -18,6 +18,10 @@ class CreateUserError(Exception):
     pass
 
 
+class DeleteUserError(Exception):
+    pass
+
+
 class UserValidationError(Exception):
     pass
 
@@ -171,3 +175,12 @@ def create_admin_account(username="admin", password="admin1"):
         print("Error: could not create admin account '" +
               username + "' with password '" + password + "'.")
         print(err)
+
+
+def delete_user(user_id):
+    try:
+        sql = "DELETE FROM users WHERE id = :user_id"
+        db.session.execute(sql, {"user_id": user_id})
+        db.session.commit()
+    except SQLAlchemyError as err:
+        raise DeleteUserError("Käyttäjätilin tuhoaminen epäonnistui.") from err

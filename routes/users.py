@@ -82,6 +82,7 @@ def show_account(user_id, error=None, message=None):
 @app.route("/account/<int:user_id>/change_password", methods=["POST"])
 def change_password(user_id):
     helpers.abort_invalid_user(user_id)
+    helpers.abort_invalid_user_data()
 
     try:
         old_password = request.form["inputOldPassword"]
@@ -99,3 +100,41 @@ def change_password(user_id):
         return show_account(user_id, message="Salasana vaihdettu.")
     except users.UserCredentialsError:
         return redirect("/")
+
+
+@app.route("/account/<int:user_id>/delete", methods=["GET", "POST"])
+def delete_account(user_id):
+    helpers.abort_invalid_user(user_id)
+
+    user = users.get_user_data_by_id(user_id)
+    kwargs = {"selected_user": user}
+
+    if request.method == "GET":
+        return helpers.render_user_template("delete_account.html", **kwargs)
+
+    helpers.abort_invalid_user_data()
+    validator = helpers.Validator()
+
+    if users.is_admin():
+        if users.get_logged_user_id() == user_id:
+            validator.error.add("deleteAccount", "Admin-tilejä ei voi poistaa.")
+    else:
+        password = request.form["inputPassword"]
+        validator.check_user_password(password)
+
+    if not validator.error.empty():
+        kwargs["error"] = validator.error
+    else:
+        try:
+            users.delete_user(user_id)
+            
+            if not users.is_admin():
+                users.logout()
+                
+            kwargs["message"] = "Käyttäjätili poistettiin onnistuneesti."
+        except users.DeleteUserError as err:
+            error = helpers.Error()
+            error.add("deleteAccount", err.__str__())
+            kwargs["error"] = error
+
+    return helpers.render_user_template("delete_account.html", **kwargs)

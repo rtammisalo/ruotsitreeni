@@ -31,14 +31,14 @@ CREATE TABLE answer_choices (
 
 CREATE TABLE answers (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users,
+    user_id INTEGER REFERENCES users ON DELETE CASCADE,
     word_id INTEGER REFERENCES words,
     result BOOLEAN
 );
 
 CREATE TABLE messages (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users,
+    user_id INTEGER REFERENCES users ON DELETE CASCADE,
     created_at TIMESTAMP,
     content TEXT,
     visible BOOLEAN
