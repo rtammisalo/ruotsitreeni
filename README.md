@@ -34,19 +34,27 @@ Sovelluksen tulisi olla nyt käytettävissä osoitteessa: http://127.0.0.1:5000/
 
 ## Heroku
 
-Voit luoda Heroku version sovelluksesta käyttämällä kurssin ohjeita apuna. Ohjelmaa voi myös testata osoitteessa [Ruotsitreeni](https://tsoha-ruotsitreeni.herokuapp.com/). Olen tehnyt admin-tilin, jos haluat kokeilla uusien harjoitusten tai sanojen tekoa (nimi 'admin' ja salasana *yllapito*).
+Luo Heroku versio sovelluksesta käyttämällä kurssin ohjeita apuna. Ohjelmaa voi testata osoitteessa [Ruotsitreeni](https://tsoha-ruotsitreeni.herokuapp.com/). Olen tehnyt admin-tilin, jos haluat kokeilla uusien harjoitusten tai sanojen tekoa (nimi 'admin' ja salasana *yllapito*).
 
 ## Sovelluksen toteutetut ominaisuudet
 
-- Käyttäjä tili salasanalla. Tilastointia ei ole vielä toteutettu. Käyttäjä ei voi poistaa itseeän tai muuttaa salasanaa.
+- Käyttäjätili salasanalla. Käyttäjätilisivulta näkee hieman tilastointia kaikista vastauksista. Käyttäjä voi nyt poistaa itsensä tai muuttaa salasanaa (admin-tili ei voi poistaa itseään).
 - Admin-tilillä voi luoda uusia harjoituksia, eli antaa harjoitukselle nimi sekä kuvaus.
 - Harjoituksen luonnin jälkeen siirrytään luomaan uusia sanoja.
 - Sanat liittyvät jokainen yhteen harjoitukseen. Sanalla on suomenkielinen ja ruotsinkielinen kenttä, sekä kuva.
 - Sanoille voidaan myös antaa monivalinnan vastauksia listassa. Jos vääriä vastausvaihtoehtoja ei anna, niin sovellus valitsee satunnaisesti muista sanoista.
-- Sanoja tai harjoituksia ei voi vielä poistaa tai muuttaa. Harjoitukset voi kuitenkin muuttaa näkymättömiksi, jolloin tavalliset käyttäjät eivät niitä kykene näkemään.
+- Harjoitukset voi kuitenkin muuttaa näkymättömiksi, jolloin tavalliset käyttäjät eivät niitä kykene näkemään.
 - Harjoituksissa ei ole toteutettuna kuin ensimmäinen monivalintaan liittyvä vaikeusaste.
-- Vieraskirja (HypeZone) näkyy pääsivulla oikealla harjoitusten vieressä. Admin-tili ei voi vielä poistaa viestejä. Viesteissä näkyy kirjoittaja ja viestin sisältö.
-- Haluaisin parantaa käytettävyyttä liittyen virheellisen tiedon antamiseen lomakkeissa. Lomake tulisi takaisin täytettynä aikaisemmilla vastauksilla, eikä tyhjänä.
+- Vieraskirja (HypeZone) näkyy pääsivulla oikealla harjoitusten vieressä. Admin-tili voi 'poistaa' viestejä eli tehdä ne näkymättömiksi muille käyttäjille. Viesteissä näkyy kirjoittaja ja viestin sisältö. Poisto tapahtuu klikkaamalla viestiä listassa. Admin voi myös siirtyä katsomaan kyseisen viestin kirjoittajan käyttäjätilisivua, jos klikkaa käyttäjän nimeä poistokyselyssä.
+- Lomakkeilla on nyt javascript tarkastusta, jotta säästyy turhilta submiteilta.
+- Admin voi myös etsiä nimellä käyttäjiä käyttäjätililtä.
+
+## Puuttuvat ominaisuudet
+
+- Sanoja tai harjoituksia ei voi vielä poistaa tai muuttaa.
+- Harjoitusten nimeä tai selostusta ei voi muuttaa. Harjoitusta ei voi poistaa.
+- Käyttäjä ei voi vielä harjoitella vastausta ilman monivalintaa.
+- Harjoitussivulla voisi näyttää tilastointia liittyen vain kyseiseen harjoitukseen.
 
 ## Sovelluksen ominaisuudet (aikaisempi suunnitelma)
 
