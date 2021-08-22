@@ -5,7 +5,7 @@
     <div class="alert alert-warning text-break" role="alert">
         Poista viesti?
         <hr>
-        {{ delete_message.username }}: {{ delete_message.content }}
+        <a href="/account/{{ delete_message.user_id }}">{{ delete_message.username }}</a>: {{ delete_message.content }}
         <hr>
         <form action="/message/{{ delete_message.id }}/delete" method="POST">
             <button type="submit" class="btn btn-danger">Poista</button>

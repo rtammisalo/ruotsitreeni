@@ -36,7 +36,7 @@ def delete_message(message_id):
 
 
 def get_message(message_id):
-    sql = " ".join(("SELECT messages.id as id, users.username as username,",
+    sql = " ".join(("SELECT messages.id as id, users.username as username, users.id as user_id,",
                     "messages.created_at as created_at, content, messages.visible as visible",
                     "FROM messages",
                     "LEFT JOIN users ON user_id = users.id",
