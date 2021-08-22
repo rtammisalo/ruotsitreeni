@@ -45,6 +45,16 @@ class Validator:
     def check_user_password(self, password):
         self.check_user_password_by_id(users.get_logged_user_id(), password)
 
+    def validate_username(self, username):
+        error = users.validate_username(username)
+        if error:
+            self.error.add("inputUsername", error)
+
+    def validate_password(self, password):
+        error = users.validate_password(password)
+        if error:
+            self.error.add("inputPassword", error)
+
 
 @app.route("/image/<int:word_id>")
 def show_image(word_id):

@@ -35,19 +35,13 @@ def create_user():
         password = request.form["inputPassword"]
         password_again = request.form["inputPasswordAgain"]
 
-        password_mismatch_error = ""
-        if password != password_again:
-            password_mismatch_error = "Annetut salasanat eivät täsmää."
+        validator = helpers.Validator()
+        validator.check_repeat_password(password, password_again)
+        validator.validate_username(username)
+        validator.validate_password(password)
 
-        username_error = users.validate_username(username)
-        password_error = users.validate_password(password)
-
-        if username_error or password_error or password_mismatch_error:
-            error = helpers.Error()
-            error.add("inputUsername", username_error)
-            error.add("inputPassword", password_error)
-            error.add("inputPasswordAgain", password_mismatch_error)
-            return helpers.render_create_user(error)
+        if not validator.error.empty():
+            return helpers.render_create_user(validator.error)
 
         users.create(username, password)
     except users.CreateUserError as err:
@@ -106,6 +100,9 @@ def change_password(user_id):
 def delete_account(user_id):
     helpers.abort_invalid_user(user_id)
 
+    if users.is_admin() and user_id == users.get_logged_user_id():
+        helpers.abort(404)
+
     user = users.get_user_data_by_id(user_id)
     kwargs = {"selected_user": user}
 
@@ -113,30 +110,17 @@ def delete_account(user_id):
         return helpers.render_user_template("delete_account.html", **kwargs)
 
     helpers.abort_invalid_user_data()
+
     validator = helpers.Validator()
 
-    if users.is_admin():
-        if users.get_logged_user_id() == user_id:
-            validator.error.add(
-                "deleteAccount", "Admin-tili ei voi poistaa itseään.")
-    else:
+    if not users.is_admin():
         password = request.form["inputPassword"]
         validator.check_user_password(password)
 
     if not validator.error.empty():
         kwargs["error"] = validator.error
     else:
-        try:
-            users.delete_user(user_id)
-
-            if not users.is_admin():
-                users.logout()
-
-            kwargs["message"] = "Käyttäjätili poistettiin onnistuneesti."
-        except users.DeleteUserError as err:
-            error = helpers.Error()
-            error.add("deleteAccount", err.__str__())
-            kwargs["error"] = error
+        kwargs.update(delete_and_logout_user(user_id))
 
     return helpers.render_user_template("delete_account.html", **kwargs)
 
@@ -156,3 +140,19 @@ def search_account():
         return show_account(selected_user_id, error=error)
 
     return redirect(f"/account/{user.id}")
+
+
+def delete_and_logout_user(user_id):
+    kwargs = {}
+    try:
+        users.delete_user(user_id)
+
+        if not users.is_admin():
+            users.logout()
+
+        kwargs["message"] = "Käyttäjätili poistettiin onnistuneesti."
+    except users.DeleteUserError as err:
+        error = helpers.Error({"deleteAccount", err.__str__()})
+        kwargs["error"] = error
+
+    return kwargs
