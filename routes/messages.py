@@ -22,21 +22,17 @@ def post_message():
     return redirect("/")
 
 
-@app.route("/message/delete_ask/<int:message_id>")
-def delete_message_ask(message_id):
+@app.route("/message/<int:message_id>/delete", methods=["POST", "GET"])
+def delete_message(message_id):
     helpers.abort_non_admin()
 
-    message = messages.get_message(message_id)
-    
-    if not message:
-        return redirect("/")
+    if request.method == "GET":
+        message = messages.get_message(message_id)
+        if not message:
+            return redirect("/")
+        return helpers.render_main_view(delete_message=message)
 
-    return helpers.render_main_view(delete_message=message)
-
-
-@app.route("/message/delete_confirm/<int:message_id>")
-def delete_message_confirm(message_id):
-    helpers.abort_non_admin()
+    helpers.abort_invalid_user_data(admin_required=True)
 
     messages.delete_message(message_id)
 
