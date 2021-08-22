@@ -7,8 +7,10 @@ import messages
 
 
 class Error:
-    def __init__(self):
-        self._messages = {}
+    def __init__(self, errors_dict=None):
+        if not errors_dict:
+            errors_dict = {}
+        self._messages = errors_dict
 
     def add(self, error_type, error_message):
         if error_message:
@@ -27,14 +29,14 @@ class Error:
 class Validator:
     def __init__(self):
         self.error = Error()
-    
+
     def check_repeat_password(self, password, password_again):
         if password != password_again:
             self.error.add("inputPasswordAgain", "Salasanat eivät ole samat.")
-    
+
     def check_user_password_by_id(self, user_id, password):
         user = users.get_user_data_by_id(user_id)
-        
+
         try:
             users.check_user_password(user, password)
         except users.UserCredentialsError as err:
@@ -90,9 +92,11 @@ def abort_non_admin():
     if not users.is_admin():
         abort(403)
 
+
 def abort_invalid_user(correct_user_id):
     if users.get_logged_user_id() != correct_user_id and not users.is_admin():
         abort(403)
+
 
 def get_exercise_or_abort(exercise_id):
     # Handle aborts in routes module

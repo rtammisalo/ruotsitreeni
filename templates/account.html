@@ -11,11 +11,11 @@
                     <th scope="row" class="col-4">Käyttäjätili</th>
                     <td class="col-8">{{ selected_user.username }}</td>
                 </tr>
-                
+
                 <tr>
                     <th scope="row" class="col-4">Tilityyppi</th>
                     <td class="col-8">
-                        {% if selected_user.account_type == 0 %} 
+                        {% if selected_user.account_type == 0 %}
                         Ylläpito
                         {% else %}
                         Käyttäjä
@@ -58,13 +58,15 @@
     </div>
     <div class="col-4 bg-light rounded p-2">
         <div class="col-12 text-center">
+            {% include "error_alert.html" %}
+
             {% if message %}
             <div class="alert alert-info mt-2" role="alert">
                 {{ message }}
             </div>
             {% endif %}
+
             <h4>Vaihda salasanaa:</h4>
-            {% include "error_alert.html" %}
             {% set user_form_action_button = "Vaihda salasana" %}
             {% set form_action = "/account/{}/change_password".format(selected_user.id) %}
             {% set validate_form = True %}
@@ -79,7 +81,21 @@
         <hr>
         <div class="col-12 text-center">
             {% if (not admin and user_id == selected_user.id) or (admin and user_id != selected_user.id) %}
-            <a class="btn btn-danger mb-2 w-75" href="/account/{{ selected_user.id }}/delete" role="button">Poista käyttäjätili</a><br>
+            <a class="btn btn-danger mb-2 w-75" href="/account/{{ selected_user.id }}/delete" role="button">Poista
+                käyttäjätili</a><br>
+            {% endif %}
+
+            {% if admin %}
+            <form action="/account/search" method="POST">
+                <div class="form-group mt-2">
+                    <label for="inputUsername">Etsi käyttäjä:</label>
+                    <input type="text" class="form-control" id="inputUsername" name="inputUsername">
+                </div>
+                <button type="submit" class="btn btn-primary">Etsi</button>
+                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                <input type="hidden" name="selectedUserId" value="{{ selected_user.id }}">
+            </form>
+            <hr>
             {% endif %}
             <a class="btn btn-primary mb-2 w-75" href="/" role="button">Takaisin</a><br>
         </div>

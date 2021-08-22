@@ -117,20 +117,21 @@ def delete_account(user_id):
 
     if users.is_admin():
         if users.get_logged_user_id() == user_id:
-            validator.error.add("deleteAccount", "Admin-tilejä ei voi poistaa.")
+            validator.error.add(
+                "deleteAccount", "Admin-tili ei voi poistaa itseään.")
     else:
         password = request.form["inputPassword"]
         validator.check_user_password(password)
-
+        
     if not validator.error.empty():
         kwargs["error"] = validator.error
     else:
         try:
             users.delete_user(user_id)
-            
+
             if not users.is_admin():
                 users.logout()
-                
+
             kwargs["message"] = "Käyttäjätili poistettiin onnistuneesti."
         except users.DeleteUserError as err:
             error = helpers.Error()
@@ -138,3 +139,20 @@ def delete_account(user_id):
             kwargs["error"] = error
 
     return helpers.render_user_template("delete_account.html", **kwargs)
+
+
+@app.route("/account/search", methods=["POST"])
+def search_account():
+    helpers.abort_invalid_user_data(admin_required=True)
+
+    username = request.form["inputUsername"]
+    selected_user_id = request.form["selectedUserId"]
+
+    user = users.get_user_data(username)
+
+    if not user:
+        error = helpers.Error(
+            {"inputUsername": f"Käyttäjää {username} ei löytynyt."})
+        return show_account(selected_user_id, error=error)
+
+    return redirect(f"/account/{user.id}")
