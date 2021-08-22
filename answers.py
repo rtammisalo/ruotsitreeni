@@ -5,8 +5,8 @@ from db import db
 def get_user_statistics(user_id, exercise_id=None):
     try:
         sql = " ".join(("SELECT *, ",
-                        "(CAST(results.correct AS FLOAT) / results.all) AS correct_percent,",
-                        "(CAST(results.wrong AS FLOAT) / results.all) AS wrong_percent",
+                        "(results.correct * 100.0 / results.all) AS correct_percent,",
+                        "(results.wrong * 100.0 / results.all) AS wrong_percent",
                         "FROM (SELECT COUNT(*) AS all, (COUNT(*) FILTER (WHERE result)) AS correct,",
                         "(COUNT(*) FILTER (WHERE NOT result)) AS wrong FROM answers"))
         parameters = {"user_id": user_id}
