@@ -97,7 +97,7 @@ def change_password(user_id):
 
 
 @app.route("/account/<int:user_id>/delete", methods=["GET", "POST"])
-def delete_account(user_id):
+def delete_user(user_id):
     helpers.abort_invalid_user(user_id)
 
     if users.is_admin() and user_id == users.get_logged_user_id():
@@ -107,7 +107,7 @@ def delete_account(user_id):
     kwargs = {"selected_user": user}
 
     if request.method == "GET":
-        return helpers.render_user_template("delete_account.html", **kwargs)
+        return helpers.render_user_template("delete_user.html", **kwargs)
 
     helpers.abort_invalid_user_data()
 
@@ -122,7 +122,7 @@ def delete_account(user_id):
     else:
         kwargs.update(delete_and_logout_user(user_id))
 
-    return helpers.render_user_template("delete_account.html", **kwargs)
+    return helpers.render_user_template("delete_user.html", **kwargs)
 
 
 @app.route("/account/search", methods=["POST"])
