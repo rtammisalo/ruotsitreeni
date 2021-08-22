@@ -24,7 +24,7 @@
             <div class="form-group mt-2">
                 <label for="inputImage">Liitä kuva:</label>
                 <input type="file" class="form-control-file" id="inputImage" name="inputImage" accept="image/jpeg" required>
-                <div class="invalid-feedback" id="invalidInputImage">Kuvatiedosto ei saa puuttua ja sen tulee olla .jpg-päätteinen.</div>
+                <div class="invalid-feedback" id="invalidInputImage">Kuvatiedosto ei saa puuttua. Sen tulee olla kooltaan alle 150 kB ja jpg-päätteinen.</div>
             </div>
             <button type="submit" class="btn btn-primary">Lisää sana</button>
             <input type="hidden" name="exercise_id" value="{{ exercise.id }}">
