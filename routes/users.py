@@ -122,7 +122,7 @@ def delete_account(user_id):
     else:
         password = request.form["inputPassword"]
         validator.check_user_password(password)
-        
+
     if not validator.error.empty():
         kwargs["error"] = validator.error
     else:
@@ -148,7 +148,7 @@ def search_account():
     username = request.form["inputUsername"]
     selected_user_id = request.form["selectedUserId"]
 
-    user = users.get_user_data(username)
+    user = users.get_user_data_by_name(username)
 
     if not user:
         error = helpers.Error(

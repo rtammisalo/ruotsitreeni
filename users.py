@@ -26,27 +26,27 @@ class UserValidationError(Exception):
     pass
 
 
-def get_user_data(username):
+def get_user_data_by_name(username):
     sql = " ".join(("SELECT id, username, password_hash, account_type, created_at",
                     "FROM users",
-                    "WHERE username=:username AND visible=TRUE"))
-    return db.session.execute(sql, {"username": username}).fetchone()
+                    "WHERE UPPER(username) = :username"))
+    return db.session.execute(sql, {"username": username.upper()}).fetchone()
 
 
 def get_user_data_by_id(user_id):
     sql = " ".join(("SELECT id, username, password_hash, account_type, created_at",
                     "FROM users",
-                    "WHERE id=:user_id AND visible=TRUE"))
+                    "WHERE id=:user_id"))
     return db.session.execute(sql, {"user_id": user_id}).fetchone()
 
 
 def check_user_password(user_data, password):
     if not user_data:
         raise UserCredentialsError(
-            "Virhe: kyseistä käyttäjänimeä ei ole olemassa.")
+            "Kyseistä käyttäjänimeä ei ole olemassa.")
 
     if not check_password_hash(user_data["password_hash"], password):
-        raise UserCredentialsError("Virhe: käyttäjänimi/salasana on väärin.")
+        raise UserCredentialsError("Käyttäjänimi/salasana on väärin.")
 
 
 def change_user_password_by_id(user_id, new_password):
@@ -57,11 +57,11 @@ def change_user_password_by_id(user_id, new_password):
         db.session.commit()
     except SQLAlchemyError as err:
         raise UserCredentialsError(
-            "Virhe: Salasanan vaihto epäonnistui.") from err
+            "Salasanan vaihto epäonnistui.") from err
 
 
 def login(username, password):
-    user = get_user_data(username)
+    user = get_user_data_by_name(username)
 
     check_user_password(user, password)
 
@@ -113,7 +113,7 @@ def is_admin():
 
 
 def validate_username(username):
-    user = get_user_data(username)
+    user = get_user_data_by_name(username)
 
     if user:
         return "Käyttäjänimi on jo olemassa."
@@ -150,9 +150,11 @@ def create(username, password, account_type=USER_ACCOUNT_TYPE, auto_login=True):
     try:
         # Use join method when constructing SQL queries in order to
         # avoid missing whitespaces.
-        sql = " ".join(("INSERT INTO users (username, password_hash,",
-                        "account_type, visible, created_at)",
-                        "VALUES (:username, :password_hash, :account_type, TRUE, NOW())"))
+        sql = " ".join((
+            "INSERT INTO users (username, password_hash, account_type, created_at)",
+            "VALUES (:username, :password_hash, :account_type, NOW())"
+        ))
+
         db.session.execute(sql, {"username": username, "password_hash": generate_password_hash(
             password), "account_type": account_type})
         db.session.commit()
@@ -161,12 +163,12 @@ def create(username, password, account_type=USER_ACCOUNT_TYPE, auto_login=True):
             login(username, password)
 
     except SQLAlchemyError as err:
-        raise CreateUserError("Virhe: käyttäjänimi on jo käytössä.") from err
+        raise CreateUserError("Käyttäjänimi on jo käytössä.") from err
 
 
 def create_admin_account(username="admin", password="admin1"):
     try:
-        if get_user_data(username):
+        if get_user_data_by_name(username):
             return
 
         create(username, password,
