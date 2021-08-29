@@ -5,7 +5,8 @@ from db import db
 def get_user_statistics(user_id, exercise_id=None):
     try:
         if exercise_id:
-            sql = """SELECT *,
+            sql = """SELECT results.all AS all, results.correct AS correct,
+                            results.wrong AS wrong,
                             (results.correct * 100.0 / results.all) AS correct_percent,
                             (results.wrong * 100.0 / results.all) AS wrong_percent
                      FROM (SELECT COUNT(*) AS all,
@@ -17,7 +18,8 @@ def get_user_statistics(user_id, exercise_id=None):
                            WHERE (words.exercise_id = :exercise_id AND
                                   user_id = :user_id)) AS results"""
         else:
-            sql = """SELECT *,
+            sql = """SELECT results.all AS all, results.correct AS correct,
+                            results.wrong AS wrong,
                             (results.correct * 100.0 / results.all) AS correct_percent,
                             (results.wrong * 100.0 / results.all) AS wrong_percent
                      FROM (SELECT COUNT(*) AS all,
