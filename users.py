@@ -27,16 +27,16 @@ class UserValidationError(Exception):
 
 
 def get_user_data_by_name(username):
-    sql = " ".join(("SELECT id, username, password_hash, account_type, created_at",
-                    "FROM users",
-                    "WHERE UPPER(username) = :username"))
+    sql = """SELECT id, username, password_hash, account_type, created_at
+             FROM users
+             WHERE UPPER(username) = :username"""
     return db.session.execute(sql, {"username": username.upper()}).fetchone()
 
 
 def get_user_data_by_id(user_id):
-    sql = " ".join(("SELECT id, username, password_hash, account_type, created_at",
-                    "FROM users",
-                    "WHERE id=:user_id"))
+    sql = """SELECT id, username, password_hash, account_type, created_at
+             FROM users
+             WHERE id=:user_id"""
     return db.session.execute(sql, {"user_id": user_id}).fetchone()
 
 
@@ -51,7 +51,9 @@ def check_user_password(user_data, password):
 
 def change_user_password_by_id(user_id, new_password):
     try:
-        sql = "UPDATE users SET password_hash = :password_hash WHERE id = :user_id"
+        sql = """UPDATE users
+                 SET password_hash = :password_hash
+                 WHERE id = :user_id"""
         db.session.execute(
             sql, {"password_hash": generate_password_hash(new_password), "user_id": user_id})
         db.session.commit()
@@ -108,7 +110,6 @@ def get_account_type():
 def is_admin():
     if get_account_type() == ADMIN_ACCOUNT_TYPE:
         return True
-
     return False
 
 
@@ -148,13 +149,8 @@ def validate_password(password):
 def create(username, password, account_type=USER_ACCOUNT_TYPE, auto_login=True):
 
     try:
-        # Use join method when constructing SQL queries in order to
-        # avoid missing whitespaces.
-        sql = " ".join((
-            "INSERT INTO users (username, password_hash, account_type, created_at)",
-            "VALUES (:username, :password_hash, :account_type, NOW())"
-        ))
-
+        sql = """INSERT INTO users (username, password_hash, account_type, created_at)
+                 VALUES (:username, :password_hash, :account_type, NOW())"""
         db.session.execute(sql, {"username": username, "password_hash": generate_password_hash(
             password), "account_type": account_type})
         db.session.commit()
@@ -181,7 +177,8 @@ def create_admin_account(username="admin", password="admin1"):
 
 def delete_user(user_id):
     try:
-        sql = "DELETE FROM users WHERE id = :user_id"
+        sql = """DELETE FROM users
+                 WHERE id = :user_id"""
         db.session.execute(sql, {"user_id": user_id})
         db.session.commit()
     except SQLAlchemyError as err:
