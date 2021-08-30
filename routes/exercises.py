@@ -9,7 +9,6 @@ import words
 @ app.route("/exercise/<int:exercise_id>/visible")
 def flip_exercise_visibility(exercise_id):
     helpers.abort_non_admin()
-
     exercise = helpers.get_exercise_or_abort(exercise_id)
     exercises.set_visible(exercise_id, not exercise.visible)
     return redirect(f"/exercise/{exercise_id}")
