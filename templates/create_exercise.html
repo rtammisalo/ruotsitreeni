@@ -8,25 +8,8 @@
     {{ error }}
 </div>
 {% endif %}
-<form action="/exercise/new" method="POST">
-    <div class="form-group mt-2">
-        <label for="inputExerciseTitle">Harjoituksen nimi:</label>
-        <input type="text" class="form-control" id="inputExerciseTitle" name="inputExerciseTitle"
-            aria-describedby="exerciseTitleHelp">
-        <small id="exerciseTitleHelp" class="form-text text-muted">Nimen tulee olla lyhyt, ytimekäs ja uniikki.</small>
-    </div>
-    <div class="form-group">
-        <label for="inputExerciseTopic">Harjoituksen aihe:</label>
-        <textarea class="form-control" id="inputExerciseTopic" rows="4" name="inputExerciseTopic"></textarea>
-        <small id="exerciseTopicHelp" class="form-text text-muted">Lisää harjoituksen aiheen kuvaus.</small>
-    </div>
-    <div class="row">
-        <div class="col-6">
-            <button type="submit" class="btn btn-primary">Luo harjoitus ja siirry lisäämään sanoja</button>
-            <a class="btn btn-primary" href="/" role="button">Takaisin</a>
-        </div>
-    </div>
-
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-</form>
+{% set form_action = "/exercise/new" %}
+{% set form_submit_button_text = "Luo harjoitus ja siirry lisäämään sanoja" %}
+{% set form_back_link = "/" %}
+{% include "exercise_form.html" %}
 {% endblock %}

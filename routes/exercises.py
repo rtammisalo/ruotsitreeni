@@ -6,7 +6,34 @@ import exercises
 import words
 
 
-@ app.route("/exercise/<int:exercise_id>/visible")
+@app.route("/exercise/<int:exercise_id>/modify", methods=["GET", "POST"])
+def modify_exercise(exercise_id):
+    helpers.abort_non_admin()
+    exercise = exercises.get_exercise(exercise_id, users.get_logged_user_id())
+    if not exercise:
+        helpers.abort(404)
+
+    if request.method == "GET":
+        return helpers.render_user_template("modify_exercise.html", exercise=exercise)
+
+    helpers.abort_invalid_user_data()
+    try:
+        title, topic = read_exercise_form()
+        exercises.update(exercise_id, title, topic)
+        return redirect(f"/exercise/{exercise_id}")
+    except ValueError as err:
+        exercise = exercises.get_dict_from_exercise(exercise, title, topic)
+        return helpers.render_user_template("modify_exercise.html",
+                                            exercise=exercise, error=err)
+
+
+def read_exercise_form():
+    title = request.form["inputExerciseTitle"]
+    topic = request.form["inputExerciseTopic"]
+    return title, topic
+
+
+@app.route("/exercise/<int:exercise_id>/visible")
 def flip_exercise_visibility(exercise_id):
     helpers.abort_non_admin()
     exercise = helpers.get_exercise_or_abort(exercise_id)
@@ -32,8 +59,7 @@ def create_exercise():
     if request.method == "POST":
         helpers.abort_invalid_user_data(admin_required=True)
 
-        title = request.form["inputExerciseTitle"]
-        topic = request.form["inputExerciseTopic"]
+        title, topic = read_exercise_form()
 
         try:
             exercise_id = exercises.create(title, topic)

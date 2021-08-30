@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block title %}Muuta harjoitusta{% endblock %}
+{% block page_content %}
+<h3>Muuta harjoitusta {{ exercise.name }}</h3>
+<hr>
+{% if error %}
+<div class="alert alert-danger mt-2" role="alert">
+    {{ error }}
+</div>
+{% endif %}
+{% set form_action = "/exercise/" ~ exercise.id ~ "/modify" %}
+{% set title = exercise.title %}
+{% set topic = exercise.topic %}
+{% set form_submit_button_text = "Muuta tietoja" %}
+{% set form_back_link = "/exercise/" ~ exercise.id %}
+{% include "exercise_form.html" %}
+{% endblock %}

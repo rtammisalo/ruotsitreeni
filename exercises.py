@@ -1,9 +1,6 @@
 from sqlalchemy.exc import SQLAlchemyError
 from db import db
 
-ANSWER_STYLE_MULTICHOICE = 0
-ANSWER_STYLE_INPUT = 1
-
 
 class CreateExerciseError(Exception):
     pass
@@ -26,8 +23,18 @@ def get_exercise(exercise_id, user_id):
              WHERE exercises.id = :exercise_id"""
     exercise = db.session.execute(
         sql, {"exercise_id": exercise_id, "user_id": user_id}).fetchone()
-    print(exercise)
     return exercise
+
+
+def get_dict_from_exercise(exercise, new_title=None, new_topic=None):
+    exercise_dict = {"id": exercise["id"], "title": exercise["title"],
+                     "topic": exercise["topic"], "created_at": exercise["created_at"],
+                     "visible": exercise["visible"]}
+    if new_title is not None:
+        exercise_dict["title"] = new_title
+    if new_topic is not None:
+        exercise_dict["topic"] = new_topic
+    return exercise_dict
 
 
 def flip_exercise_answer_style(exercise, user_id):
@@ -73,3 +80,16 @@ def create(title, topic):
         return result.fetchone()[0]
     except SQLAlchemyError as err:
         raise CreateExerciseError("Harjoituksen nimi on jo käytössä.") from err
+
+
+def update(exercise_id, new_title, new_topic):
+    try:
+        sql = """UPDATE exercises
+                 SET title = :new_title, topic = :new_topic
+                 WHERE id = :exercise_id"""
+        parameters = {"new_title": new_title, "new_topic": new_topic,
+                      "exercise_id": exercise_id}
+        db.session.execute(sql, parameters)
+        db.session.commit()
+    except SQLAlchemyError as err:
+        raise ValueError("Harjoituksen nimi on jo käytössä.") from err
