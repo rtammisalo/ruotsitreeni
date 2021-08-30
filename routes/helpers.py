@@ -110,7 +110,7 @@ def abort_invalid_user(correct_user_id):
 
 def get_exercise_or_abort(exercise_id):
     # Handle aborts in routes module
-    exercise = exercises.get_exercise(exercise_id)
+    exercise = exercises.get_exercise(exercise_id, users.get_logged_user_id())
 
     if not exercise:
         abort(404)

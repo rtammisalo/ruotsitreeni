@@ -20,17 +20,14 @@ def process_exercise_answer(exercise_id, word_id):
     session["correct_answer"] = word.swedish_word
     result = (answer == word.swedish_word)
     words.add_answer(users.get_logged_user_id(), word_id, result)
-
     return redirection
 
 
 @app.route("/exercise/<int:exercise_id>/word")
 def show_words(exercise_id):
     helpers.abort_non_admin()
-
     exercise = helpers.get_exercise_or_abort(exercise_id)
     exercise_words = words.get_words(exercise_id)
-
     return helpers.render_user_template("word.html", exercise=exercise, words=exercise_words)
 
 
@@ -67,5 +64,4 @@ def create_word(exercise_id):
     word_id = words.add_word(exercise_id, finnish_word,
                              swedish_word, image_data)
     words.add_multiple_choices(word_id, choices[:20])
-
     return redirect(f"/exercise/{exercise_id}/word")

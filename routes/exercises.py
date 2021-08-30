@@ -15,6 +15,14 @@ def flip_exercise_visibility(exercise_id):
     return redirect(f"/exercise/{exercise_id}")
 
 
+@app.route("/exercise/<int:exercise_id>/flip_answer_style", methods=["POST"])
+def flip_answer_style(exercise_id):
+    helpers.abort_invalid_user_data()
+    exercise = helpers.get_exercise_or_abort(exercise_id)
+    exercises.flip_exercise_answer_style(exercise, users.get_logged_user_id())
+    return redirect(f"/exercise/{exercise_id}")
+
+
 @ app.route("/exercise/new", methods=["GET", "POST"])
 def create_exercise():
     helpers.abort_non_admin()
@@ -56,5 +64,6 @@ def show_exercise(exercise_id):
         choices = words.get_multiple_choices(word.id, word.swedish_word)
 
     kwargs = {"exercise": exercise, "word": word, "multiple_choices": choices,
-              "answer": answer, "correct_answer": correct_answer}
+              "answer": answer, "correct_answer": correct_answer,
+              "use_multichoice": exercises.get_exercise_answer_style(exercise)}
     return helpers.render_user_template("exercise.html", **kwargs)

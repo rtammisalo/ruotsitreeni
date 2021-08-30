@@ -10,28 +10,41 @@
         <small class="text-muted mt-0 pt-0 mb-1">suomeksi</small><br>
         <img src="/image/{{ word.id }}" class="img-fluid" alt="Kuva sanasta {{ word.finnish_word }}">
         <hr>
+
         <form action="/exercise/{{ exercise.id }}/word/{{ word.id }}/answer" method="POST">
+            {% if use_multichoice %}
             <div class="form-group">
-            <label>Valitse oikea vastaus ruotsiksi:</label><br>
-            {% for five_choices in multiple_choices|batch(5) %}
+                <label>Valitse oikea vastaus ruotsiksi:</label><br>
+                {% for five_choices in multiple_choices|batch(5) %}
                 <div class="row btn-group btn-group-justified mb-1">
-                {% for choice in five_choices %}
-                    <button type="submit" class="btn btn-light ml-1 mr-1" name="answer" value="{{ choice }}">{{ choice }}</button>
-                {% endfor %}
+                    {% for choice in five_choices %}
+                    <button type="submit" class="btn btn-light ml-1 mr-1" name="answer" value="{{ choice }}">{{ choice
+                        }}</button>
+                    {% endfor %}
                 </div>
                 <br>
-            {% endfor %}
+                {% endfor %}
             </div>
+            {% else %}
+            <label for="answer">Anna sana ruotsiksi:</label>
+            <div class="form-row">
+                <div class="col">
+                    <input type="text" class="form-control" id="answer" name="answer" maxlength="100" required>
+                </div>
+                <button type="submit" class="btn btn-primary ml-1 mr-1">Vastaa</button>
+            </div>
+            {% endif %}
             <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
         </form>
+
         {% if answer %}
         {% set alert_type = "alert-danger" %}
         {% if answer == correct_answer%}{% set alert_type = "alert-success" %}{% endif %}
         <div class="alert {{ alert_type }} mt-2 w-100" role="alert">
             {% if answer != correct_answer %}
-                Vastasit väärin. Oikea vastaus oli: {{ correct_answer }}
+            Vastasit väärin. Oikea vastaus oli: {{ correct_answer }}
             {% else %}
-                Vastasit oikein!
+            Vastasit oikein!
             {% endif %}
         </div>
         {% endif %}
@@ -39,26 +52,33 @@
     </div>
     <div class="col-4 bg-light rounded p-2">
         <h3>{{ exercise.title }}
-        {% if not exercise.visible %}
+            {% if not exercise.visible %}
             <small class="text-muted">(näkymätön)</small>
-        {% endif %}
+            {% endif %}
         </h3>
         <p>{{ exercise.topic }}</p>
         <hr>
         <div class="col-12 text-center">
-        {% if admin %}
+            {% if admin %}
             <a class="btn btn-primary mb-2 w-75" href="#" role="button">Muuta tietoja</a>
             <br>
-            <a class="btn btn-primary mb-2 w-75" href="/exercise/{{ exercise.id }}/word" role="button">Muokkaa sanoja</a>
+            <a class="btn btn-primary mb-2 w-75" href="/exercise/{{ exercise.id }}/word" role="button">Muokkaa
+                sanoja</a>
             <br>
             {% if not exercise.visible %}
-                <a class="btn btn-primary mb-2 w-75" href="/exercise/{{ exercise.id }}/visible" role="button">Tee näkyväksi</a>
+            <a class="btn btn-primary mb-2 w-75" href="/exercise/{{ exercise.id }}/visible" role="button">Tee
+                näkyväksi</a>
             {% else %}
-                <a class="btn btn-primary mb-2 w-75" href="/exercise/{{ exercise.id }}/visible" role="button">Tee näkymättömäksi</a>
+            <a class="btn btn-primary mb-2 w-75" href="/exercise/{{ exercise.id }}/visible" role="button">Tee
+                näkymättömäksi</a>
             {% endif %}
             <br>
-        {% endif %}
-        <a class="btn btn-primary mb-2 w-75" href="/" role="button">Lopeta harjoittelu</a><br>
+            {% endif %}
+            <form action="/exercise/{{ exercise.id }}/flip_answer_style" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                <button type="submit" class="btn btn-primary mb-2 w-75">Vaihda vastaustapaa</button>
+            </form>
+            <a class="btn btn-primary mb-2 w-75" href="/" role="button">Lopeta harjoittelu</a><br>
         </div>
     </div>
 </div>

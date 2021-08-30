@@ -42,3 +42,10 @@ CREATE TABLE messages (
     content TEXT,
     visible BOOLEAN
 );
+
+CREATE TABLE exercise_answer_styles (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users ON DELETE CASCADE,
+    exercise_id INTEGER REFERENCES exercises ON DELETE CASCADE,
+    use_multichoice BOOLEAN
+);
