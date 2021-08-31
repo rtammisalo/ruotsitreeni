@@ -99,3 +99,10 @@ def get_random_choices(swedish_word, choices_count):
         words = words.union(random.sample(default_words, add_count))
 
     return list(words)
+
+
+def remove_word(word_id):
+    sql = """DELETE FROM words
+             WHERE id = :word_id"""
+    db.session.execute(sql, {"word_id": word_id})
+    db.session.commit()

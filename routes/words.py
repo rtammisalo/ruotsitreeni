@@ -65,3 +65,19 @@ def create_word(exercise_id):
                              swedish_word, image_data)
     words.add_multiple_choices(word_id, choices[:20])
     return redirect(f"/exercise/{exercise_id}/word")
+
+
+@app.route("/exercise/<int:exercise_id>/word/modify", methods=["POST"])
+def modify_or_delete_word(exercise_id):
+    helpers.abort_invalid_user_data(admin_required=True)
+    
+    if request.form.get("remove", None) is not None:
+        return remove_word(exercise_id, request.form["wordSelection"])
+
+    # non-remove operation implies modify
+    return redirect(f"/exercise/{exercise_id}")
+
+
+def remove_word(exercise_id, word_id):
+    words.remove_word(word_id)
+    return redirect(f"/exercise/{exercise_id}/word")
