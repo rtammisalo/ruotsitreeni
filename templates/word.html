@@ -1,32 +1,40 @@
-{% extends "layout.html" %}
-{% block title %}Harjoitusnäkymä - Lisää uusi sana{% endblock %}
-{% block page_content %}
 <div class="row no-gutters justify-content-between">
-    <div class="col-7">
-        <h3>Lisää uusi sana:</h3>
+    <div class="col-8 pr-4">
+        <h3>{{ form_title }}</h3>
         {% include "error_alert.html" %}
-        <form class="needs-validation" action="/exercise/{{ exercise.id }}/word/new" method="POST" enctype="multipart/form-data" novalidate>
+        <form class="needs-validation" action="{{ form_action }}" method="POST" enctype="multipart/form-data" novalidate>
             <div class="form-group mt-2">
                 <label for="inputFinnishWord">Sana suomeksi:</label>
-                <input type="text" class="form-control" id="inputFinnishWord" name="inputFinnishWord" required>
+                <input type="text" class="form-control" id="inputFinnishWord" name="inputFinnishWord" value="{{ finnish_word }}" required>
                 <div class="invalid-feedback" id="invalidInputFinnishWord">Suomenkielinen sana puuttuu.</div>
             </div>
             <div class="form-group mt-2">
                 <label for="inputSwedishWord">Sana ruotsiksi:</label>
-                <input type="text" class="form-control" id="inputSwedishWord" name="inputSwedishWord" required>
+                <input type="text" class="form-control" id="inputSwedishWord" name="inputSwedishWord" value="{{ swedish_word }}" required>
                 <div class="invalid-feedback" id="invalidInputSwedishWord">Ruotsinkielinen sana puuttuu.</div>
             </div>
             <div class="form-group mt-2">
                 <label for="inputMultipleChoice">Monivalinnan väärät vastaukset:</label>
-                <textarea class="form-control" id="inputMultipleChoice" name="inputMultipleChoice" rows="5"  aria-describedby="multipleChoiceHelp"></textarea>
+                <textarea class="form-control" id="inputMultipleChoice" name="inputMultipleChoice" rows="5"  aria-describedby="multipleChoiceHelp">{% for choice in answer_choices %}{{ choice[0] ~ "\n" }}{% endfor %}</textarea>
                 <small id="multipleChoiceHelp" class="form-text text-muted">Sanojen tulee olla jokainen omalla rivillään. Sovellus hyväksyy 20 ensimmäistä sanaa. Jos et anna sanoja, niin järjestelmä arpoo niitä vastausvaihtoehdoiksi.</small>
             </div>
+            {% if not modify %}
             <div class="form-group mt-2">
                 <label for="inputImage">Liitä kuva:</label>
                 <input type="file" class="form-control-file" id="inputImage" name="inputImage" accept="image/jpeg" required>
                 <div class="invalid-feedback" id="invalidInputImage">Kuvatiedosto ei saa puuttua. Sen tulee olla kooltaan alle 150 kB ja jpg-päätteinen.</div>
             </div>
-            <button type="submit" class="btn btn-primary">Lisää sana</button>
+            {% else %}
+            Nykyinen kuva: <br>
+            <img src="/image/{{ selected_word.id }}" class="img-fluid" alt="Kuva sanasta {{ selected_word.finnish_word }}">
+            <br>
+            <div class="form-group mt-2">
+                <label for="inputImage">Muuta kuvaa:</label>
+                <input type="file" class="form-control-file" id="inputImage" name="inputImage" accept="image/jpeg">
+                <div class="invalid-feedback" id="invalidInputImage">Kuvatiedoston tulee olla kooltaan alle 150 kB ja jpg-päätteinen.</div>
+            </div>
+            {% endif %}
+            <button type="submit" class="btn btn-primary">{{ submit_button_text }}</button>
             <input type="hidden" name="exercise_id" value="{{ exercise.id }}">
             <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
         </form>
@@ -53,8 +61,8 @@
             </div>
             {% if words %}
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary mb-2 w-75" name="modify">Muuta sanaa</button>
-                    <button type="submit" class="btn btn-primary w-75" name="remove">Poista sana</button>
+                    <button type="submit" class="btn btn-primary mb-2 w-75" name="modify">Muuta sanalistan sanaa</button>
+                    <button type="submit" class="btn btn-primary w-75" name="remove">Poista sanalistan sana</button>
                 </div>
             {% endif %}
             <input type="hidden" name="exercise_id" value="{{ exercise.id }}">
@@ -69,4 +77,3 @@
 
 
 <script type="text/javascript" src="/static/validation.js"></script>
-{% endblock %}

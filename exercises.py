@@ -26,6 +26,13 @@ def get_exercise(exercise_id, user_id):
     return exercise
 
 
+def delete_exercise(exercise_id):
+    sql = """DELETE FROM exercises
+             WHERE id = :exercise_id"""
+    db.session.execute(sql, {"exercise_id": exercise_id})
+    db.session.commit()
+
+
 def get_dict_from_exercise(exercise, new_title=None, new_topic=None):
     exercise_dict = {"id": exercise["id"], "title": exercise["title"],
                      "topic": exercise["topic"], "created_at": exercise["created_at"],

@@ -61,6 +61,16 @@ def add_word(exercise_id, finnish, swedish, image_data):
     return result.fetchone()[0]
 
 
+def update_word(word_id, finnish, swedish, image_data):
+    sql = """UPDATE words
+             SET finnish_word = :finnish, swedish_word = :swedish, image_data = :image_data
+             WHERE id = :word_id"""
+    parameters = {"word_id": word_id, "finnish": finnish,
+                  "swedish": swedish, "image_data": image_data}
+    db.session.execute(sql, parameters)
+    db.session.commit()
+
+
 def add_multiple_choices(word_id, choices):
     if not choices:
         return
@@ -72,11 +82,23 @@ def add_multiple_choices(word_id, choices):
     db.session.commit()
 
 
-def get_multiple_choices(word_id, swedish_word):
+def update_multiple_choices(word_id, choices):
+    sql = """DELETE FROM answer_choices
+             WHERE word_id = :word_id"""
+    db.session.execute(sql, {"word_id": word_id})
+    db.session.commit()
+    add_multiple_choices(word_id, choices)
+
+
+def get_admin_defined_choices(word_id):
     sql = """SELECT wrong_answer
              FROM answer_choices
              WHERE word_id = :word_id"""
-    choices = db.session.execute(sql, {"word_id": word_id}).fetchall()
+    return db.session.execute(sql, {"word_id": word_id}).fetchall()
+
+
+def get_multiple_choices(word_id, swedish_word):
+    choices = get_admin_defined_choices(word_id)
 
     if not choices:
         choices = get_random_choices(swedish_word, RANDOM_WORD_CHOICES)

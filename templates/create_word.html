@@ -1,0 +1,8 @@
+{% extends "layout.html" %}
+{% block title %}Harjoitusnäkymä - Lisää uusi sana{% endblock %}
+{% block page_content %}
+{% set form_title = "Lisää uusi sana:" %}
+{% set form_action = "/exercise/" ~ exercise.id ~ "/word/new" %}
+{% set submit_button_text = "Lisää sana" %}
+{% include "word.html" %}
+{% endblock %}

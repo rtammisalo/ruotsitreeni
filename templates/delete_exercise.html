@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block title %}Tilinhallinta - Poista harjoitus{% endblock %}
+{% block page_content %}
+<div class="row no-gutters justify-content-center">
+    <div class="col-6 text-center pt-5">
+        {% if message %}
+        <div class="alert alert-info mt-2" role="alert">
+            {{ message }}
+        </div>
+        <a class="btn btn-primary mb-2 w-75" href="/" role="button">Takaisin pääsivulle</a><br>
+        {% else %}
+
+        <h3>Poista harjoitus</h3>
+        <hr>
+        <p class="text-left">Poista harjoitus <b>{{ selected_exercise.title }}</b> järjestelmästä? Poistossa katoaa kaikki
+            harjoituksen sanat ja mahdolliset käyttäjien vastaukset. Poisto on pysyvä, eikä sitä voi perua. </p>
+        <hr>
+        <form action="/exercise/{{ selected_exercise.id }}/delete" method="POST">
+            <button type="submit" class="btn btn-danger mb-2 w-75">Poista harjoitus</button>
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+        </form>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

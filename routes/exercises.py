@@ -92,3 +92,17 @@ def show_exercise(exercise_id):
               "answer": answer, "correct_answer": correct_answer,
               "use_multichoice": exercises.get_exercise_answer_style(exercise)}
     return helpers.render_user_template("exercise.html", **kwargs)
+
+
+@app.route("/exercise/<int:exercise_id>/delete", methods=["POST", "GET"])
+def delete_exercise(exercise_id):
+    helpers.abort_non_admin()
+
+    exercise = helpers.get_exercise_or_abort(exercise_id)
+    if request.method == "GET":
+        return helpers.render_user_template("delete_exercise.html", selected_exercise=exercise)
+
+    helpers.abort_invalid_user_data()
+    exercises.delete_exercise(exercise_id)
+    message = f"Harjoitus {exercise['title']} on poistettu."
+    return helpers.render_user_template("delete_exercise.html", message=message)

@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block title %}Harjoitusnäkymä - Muuta sanaa{% endblock %}
+{% block page_content %}
+{% set form_title = "Muuta sanaa:" %}
+{% set form_action = "/exercise/" ~ exercise.id ~ "/word/" ~ selected_word.id ~ "/modify" %}
+{% set finnish_word = selected_word.finnish_word %}
+{% set swedish_word = selected_word.swedish_word %}
+{% set modify = True %}
+{% set submit_button_text = "Muuta sanaa" %}
+{% include "word.html" %}
+{% endblock %}
