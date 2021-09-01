@@ -71,8 +71,8 @@
             {% else %}
             <a class="btn btn-primary mb-2 w-75" href="/exercise/{{ exercise.id }}/visible" role="button">Tee
                 näkymättömäksi</a>
-            <a class="btn btn-danger mb-2 w-75" href="/exercise/{{ exercise.id }}/delete" role="button">Poista harjoitus</a>
             {% endif %}
+            <a class="btn btn-danger mb-2 w-75" href="/exercise/{{ exercise.id }}/delete" role="button">Poista harjoitus</a>
             <hr>
             {% endif %}
             <form action="/exercise/{{ exercise.id }}/flip_answer_style" method="POST">
