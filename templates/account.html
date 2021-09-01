@@ -66,6 +66,7 @@
             </div>
             {% endif %}
 
+            {% if user_id == selected_user.id %}
             <h4>Vaihda salasanaa:</h4>
             {% set user_form_action_button = "Vaihda salasana" %}
             {% set form_action = "/account/{}/change_password".format(selected_user.id) %}
@@ -77,12 +78,14 @@
             {% set change_password = True %}
             {% set create_password = True %}
             {% include "user_form.html" %}
+            {% endif %}
         </div>
         <hr>
         <div class="col-12 text-center">
             {% if (not admin and user_id == selected_user.id) or (admin and user_id != selected_user.id) %}
             <a class="btn btn-danger mb-2 w-75" href="/account/{{ selected_user.id }}/delete" role="button">Poista
-                käyttäjätili</a><br>
+                käyttäjätili</a>
+            <hr>
             {% endif %}
 
             {% if admin %}
