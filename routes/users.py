@@ -15,7 +15,7 @@ def login():
 
     try:
         users.login(username, password)
-    except users.UserCredentialsError as err:
+    except ValueError as err:
         return helpers.render_login(error=err)
 
     return redirect("/")
@@ -43,7 +43,7 @@ def create_user():
             return helpers.render_create_user(validator.error)
 
         users.create(username, password)
-    except users.CreateUserError as err:
+    except ValueError as err:
         return helpers.render_create_user(err)
 
     return redirect("/")
@@ -88,7 +88,7 @@ def change_password(user_id):
 
         users.change_user_password_by_id(user_id, password)
         return show_account(user_id, message="Salasana vaihdettu.")
-    except users.UserCredentialsError:
+    except ValueError:
         return redirect("/")
 
 
@@ -148,7 +148,7 @@ def delete_and_logout_user(user_id):
             users.logout()
 
         kwargs["message"] = "Käyttäjätili poistettiin onnistuneesti."
-    except users.DeleteUserError as err:
+    except ValueError as err:
         error = helpers.Error({"deleteAccount", err.__str__()})
         kwargs["error"] = error
 

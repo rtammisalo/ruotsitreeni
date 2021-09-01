@@ -2,10 +2,6 @@ from sqlalchemy.exc import SQLAlchemyError
 from db import db
 
 
-class CreateExerciseError(Exception):
-    pass
-
-
 def get_exercises():
     sql = """SELECT id, title, topic, created_at, visible
              FROM exercises
@@ -86,7 +82,7 @@ def create(title, topic):
         db.session.commit()
         return result.fetchone()[0]
     except SQLAlchemyError as err:
-        raise CreateExerciseError("Harjoituksen nimi on jo käytössä.") from err
+        raise ValueError("Harjoituksen nimi on jo käytössä.") from err
 
 
 def update(exercise_id, new_title, new_topic):

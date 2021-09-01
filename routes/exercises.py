@@ -66,7 +66,7 @@ def create_exercise():
         try:
             exercise_id = exercises.create(title, topic)
             return redirect(f"/exercise/{exercise_id}")
-        except exercises.CreateExerciseError as err:
+        except ValueError as err:
             return helpers.render_user_template("create_exercise.html", error=err)
 
     return redirect("/")

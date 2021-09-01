@@ -10,22 +10,6 @@ USER_ACCOUNT_TYPE = 1
 PASSWORD_REGEX = r"^(\w|[^\w ]){6,20}$"
 
 
-class UserCredentialsError(Exception):
-    pass
-
-
-class CreateUserError(Exception):
-    pass
-
-
-class DeleteUserError(Exception):
-    pass
-
-
-class UserValidationError(Exception):
-    pass
-
-
 def get_user_data_by_name(username):
     sql = """SELECT id, username, password_hash, account_type, created_at
              FROM users
@@ -42,11 +26,10 @@ def get_user_data_by_id(user_id):
 
 def check_user_password(user_data, password):
     if not user_data:
-        raise UserCredentialsError(
-            "Kyseistä käyttäjänimeä ei ole olemassa.")
+        raise ValueError("Kyseistä käyttäjänimeä ei ole olemassa.")
 
     if not check_password_hash(user_data["password_hash"], password):
-        raise UserCredentialsError("Käyttäjänimi/salasana on väärin.")
+        raise ValueError("Käyttäjänimi/salasana on väärin.")
 
 
 def change_user_password_by_id(user_id, new_password):
@@ -58,15 +41,12 @@ def change_user_password_by_id(user_id, new_password):
             sql, {"password_hash": generate_password_hash(new_password), "user_id": user_id})
         db.session.commit()
     except SQLAlchemyError as err:
-        raise UserCredentialsError(
-            "Salasanan vaihto epäonnistui.") from err
+        raise ValueError("Salasanan vaihto epäonnistui.") from err
 
 
 def login(username, password):
     user = get_user_data_by_name(username)
-
     check_user_password(user, password)
-
     session["username"] = username
     session["user_id"] = user["id"]
     session["account_type"] = user["account_type"]
@@ -78,17 +58,6 @@ def logout():
     del session["user_id"]
     del session["account_type"]
     del session["csrf_token"]
-
-
-def validate_user(csrf_token, admin_required=False):
-    if not get_logged_user_id():
-        raise UserValidationError("User not logged in.")
-
-    if get_csrf_token() != csrf_token:
-        raise UserValidationError("CSRF token mismatch.")
-
-    if admin_required and not is_admin():
-        raise UserValidationError("User does not have admin privileges.")
 
 
 def get_logged_user_id():
@@ -132,7 +101,6 @@ def validate_username(username):
 
 
 def validate_password(password):
-
     if len(password) < 6:
         return "Salasana on liian lyhyt."
 
@@ -140,14 +108,12 @@ def validate_password(password):
         return "Salasana on liian pitkä."
 
     if not re.search(PASSWORD_REGEX, password):
-        print(password)
         return "Salasana sisältää vääriä merkkejä."
 
     return None
 
 
 def create(username, password, account_type=USER_ACCOUNT_TYPE, auto_login=True):
-
     try:
         sql = """INSERT INTO users (username, password_hash, account_type, created_at)
                  VALUES (:username, :password_hash, :account_type, NOW())"""
@@ -159,7 +125,7 @@ def create(username, password, account_type=USER_ACCOUNT_TYPE, auto_login=True):
             login(username, password)
 
     except SQLAlchemyError as err:
-        raise CreateUserError("Käyttäjänimi on jo käytössä.") from err
+        raise ValueError("Käyttäjänimi on jo käytössä.") from err
 
 
 def create_admin_account(username="admin", password="admin1"):
@@ -169,7 +135,7 @@ def create_admin_account(username="admin", password="admin1"):
 
         create(username, password,
                account_type=ADMIN_ACCOUNT_TYPE, auto_login=False)
-    except CreateUserError as err:
+    except ValueError as err:
         print("Error: could not create admin account '" +
               username + "' with password '" + password + "'.")
         print(err)
@@ -182,4 +148,4 @@ def delete_user(user_id):
         db.session.execute(sql, {"user_id": user_id})
         db.session.commit()
     except SQLAlchemyError as err:
-        raise DeleteUserError("Käyttäjätilin tuhoaminen epäonnistui.") from err
+        raise ValueError("Käyttäjätilin tuhoaminen epäonnistui.") from err

@@ -39,7 +39,7 @@ class Validator:
 
         try:
             users.check_user_password(user, password)
-        except users.UserCredentialsError as err:
+        except ValueError as err:
             self.error.add("inputPassword", err.__str__())
 
     def check_user_password(self, password):
