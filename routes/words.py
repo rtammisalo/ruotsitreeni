@@ -134,4 +134,5 @@ def modify_word(exercise_id, word_id):
     if request.method == "GET":
         return helpers.render_user_template("modify_word.html", **kwargs)
 
+    helpers.abort_invalid_user_data(admin_required=True)
     return process_word_input_form(exercise_id, kwargs, word_data)
