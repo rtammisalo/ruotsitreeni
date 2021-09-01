@@ -3,6 +3,8 @@ from flask_init import app
 from routes import helpers
 import words
 import users
+import answers
+import exercises
 
 
 @app.route("/exercise/<int:exercise_id>/word/<int:word_id>/answer", methods=["POST"])
@@ -19,8 +21,10 @@ def process_exercise_answer(exercise_id, word_id):
 
     session["answer"] = answer
     session["correct_answer"] = word.swedish_word
+    used_multichoice = request.form["used_multichoice"]
     result = (answer == word.swedish_word)
-    words.add_answer(users.get_logged_user_id(), word_id, result)
+    answers.add_answer(users.get_logged_user_id(),
+                       word_id, used_multichoice, result)
     return redirection
 
 
@@ -29,7 +33,10 @@ def show_words(exercise_id):
     helpers.check_admin_privileges()
     exercise = helpers.get_exercise_or_abort(exercise_id)
     exercise_words = words.get_words(exercise_id)
-    return helpers.render_user_template("create_word.html", exercise=exercise, words=exercise_words)
+    use_multichoice = exercises.get_exercise_answer_style(exercise)
+    return helpers.render_user_template_with_stats("create_word.html", exercise=exercise,
+                                                   use_multichoice=use_multichoice,
+                                                   words=exercise_words)
 
 
 @app.route("/exercise/<int:exercise_id>/word/new", methods=["POST"])
@@ -38,7 +45,8 @@ def create_word(exercise_id):
     helpers.check_csrf()
     exercise = helpers.get_exercise_or_abort(exercise_id)
     exercise_words = words.get_words(exercise_id)
-    kwargs = {"exercise": exercise, "words": exercise_words}
+    kwargs = {"exercise": exercise, "words": exercise_words,
+              "use_multichoice": exercises.get_exercise_answer_style(exercise)}
     return process_word_input_form(exercise_id, kwargs)
 
 
@@ -90,8 +98,10 @@ def process_word_input_form(exercise_id, template_keywords, old_word_data=None):
     if not error.empty():
         template_keywords["error"] = error
         if old_word_data:
-            return helpers.render_user_template("modify_word.html", **template_keywords)
-        return helpers.render_user_template("create_word.html", **template_keywords)
+            return helpers.render_user_template_with_stats("modify_word.html",
+                                                           **template_keywords)
+        return helpers.render_user_template_with_stats("create_word.html",
+                                                       **template_keywords)
 
     if old_word_data:
         word_id = old_word_data["id"]
@@ -132,10 +142,11 @@ def modify_word(exercise_id, word_id):
     choices = words.get_admin_defined_choices(word_id)
     exercise_words = words.get_words(exercise_id)
     kwargs = {"exercise": exercise, "words": exercise_words,
-              "selected_word": word_data, "answer_choices": choices}
+              "selected_word": word_data, "answer_choices": choices,
+              "use_multichoice": exercises.get_exercise_answer_style(exercise)}
 
     if request.method == "GET":
-        return helpers.render_user_template("modify_word.html", **kwargs)
+        return helpers.render_user_template_with_stats("modify_word.html", **kwargs)
 
     helpers.check_csrf()
     return process_word_input_form(exercise_id, kwargs, word_data)

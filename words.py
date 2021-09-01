@@ -10,14 +10,6 @@ DEFAULT_SWEDISH_WORDS = {"igår", "idag", "imorgon", "timme", "kan", "göra",
 RANDOM_WORD_CHOICES = 9
 
 
-def add_answer(user_id, word_id, result):
-    sql = """INSERT INTO answers (user_id, word_id, result)
-             VALUES (:user_id, :word_id, :result)"""
-    db.session.execute(
-        sql, {"user_id": user_id, "word_id": word_id, "result": result})
-    db.session.commit()
-
-
 def get_word(word_id):
     sql = """SELECT id, finnish_word, swedish_word, image_data
              FROM words 

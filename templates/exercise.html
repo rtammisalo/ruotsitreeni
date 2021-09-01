@@ -29,12 +29,13 @@
             <label for="answer">Anna sana ruotsiksi:</label>
             <div class="form-row">
                 <div class="col">
-                    <input type="text" class="form-control" id="answer" name="answer" maxlength="100" required>
+                    <input type="text" autocomplete="off" class="form-control" id="answer" name="answer" maxlength="100" required>
                 </div>
                 <button type="submit" class="btn btn-primary ml-1 mr-1">Vastaa</button>
             </div>
             {% endif %}
             <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+            <input type="hidden" name="used_multichoice" value="{{ use_multichoice }}">
         </form>
 
         {% if answer %}

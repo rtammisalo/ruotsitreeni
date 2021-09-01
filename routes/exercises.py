@@ -51,7 +51,7 @@ def flip_answer_style(exercise_id):
     return redirect(f"/exercise/{exercise_id}")
 
 
-@ app.route("/exercise/new", methods=["GET", "POST"])
+@app.route("/exercise/new", methods=["GET", "POST"])
 def create_exercise():
     helpers.check_admin_privileges()
 
@@ -72,7 +72,7 @@ def create_exercise():
     return redirect("/")
 
 
-@ app.route("/exercise/<int:exercise_id>")
+@app.route("/exercise/<int:exercise_id>")
 def show_exercise(exercise_id):
     helpers.check_user_privileges()
 
@@ -92,7 +92,7 @@ def show_exercise(exercise_id):
     kwargs = {"exercise": exercise, "word": word, "multiple_choices": choices,
               "answer": answer, "correct_answer": correct_answer,
               "use_multichoice": exercises.get_exercise_answer_style(exercise)}
-    return helpers.render_user_template("exercise.html", **kwargs)
+    return helpers.render_user_template_with_stats("exercise.html", **kwargs)
 
 
 @app.route("/exercise/<int:exercise_id>/delete", methods=["POST", "GET"])

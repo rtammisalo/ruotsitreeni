@@ -62,7 +62,7 @@ def show_account(user_id, error=None, message=None):
     helpers.check_user_privileges(required_user_id=user_id)
     user = users.get_user_data_by_id(user_id)
     if user:
-        stats = answers.get_user_statistics(user_id)
+        stats = answers.get_all_user_statistics(user_id)
         kwargs = {"selected_user": user, "answers": stats,
                   "error": error, "message": message}
         return helpers.render_user_template("account.html", **kwargs)

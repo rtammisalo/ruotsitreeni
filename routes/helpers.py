@@ -4,6 +4,7 @@ import users
 import exercises
 import words
 import messages
+import answers
 
 
 class Error:
@@ -61,7 +62,6 @@ def show_image(word_id):
     image_data = words.get_word(word_id).image_data
     response = make_response(bytes(image_data))
     response.headers.set("Content-Type", "image/jpeg")
-
     return response
 
 
@@ -83,6 +83,18 @@ def render_user_template(template, **kwargs):
     kwargs["username"] = users.get_username()
     kwargs["admin"] = users.is_admin()
     return render_template(template, **kwargs)
+
+
+def render_user_template_with_stats(template, exercise, use_multichoice, **kwargs):
+    user_id = users.get_logged_user_id()
+    if use_multichoice:
+        stats = answers.get_multichoice_user_statistics(user_id, exercise.id)
+    else:
+        stats = answers.get_input_user_statistics(user_id, exercise.id)
+    kwargs["statistics"] = stats
+    kwargs["exercise"] = exercise
+    kwargs["use_multichoice"] = use_multichoice
+    return render_user_template(template, **kwargs)
 
 
 def abort_non_admin():

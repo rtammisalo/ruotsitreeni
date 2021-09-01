@@ -32,6 +32,7 @@ CREATE TABLE answers (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users ON DELETE CASCADE,
     word_id INTEGER REFERENCES words ON DELETE CASCADE,
+    used_multichoice BOOLEAN,
     result BOOLEAN
 );
 

@@ -1,9 +1,30 @@
 <h3 class="mb-0">
     {{ exercise.title }}
-    {% if not exercise.visible %}
-    <small class="text-muted">(näkymätön)</small>
-    {% endif %}
 </h3>
-<p class="small text-muted">Luotu: {{ exercise.created_at.strftime("%d-%m-%Y") }}</p>
+{% if not exercise.visible %}
+<p class="text-muted mb-0">(näkymätön)</p>
+{% endif %}
+<p class="small text-muted mt-0">Luotu: {{ exercise.created_at.strftime("%d-%m-%Y") }}
+</p>
 <p>{{ exercise.topic }}</p>
+{% if statistics is defined %}
+<hr>
+<table class="table table-borderless table-sm text-center text-muted">
+    <thead></thead>
+    <tbody>
+        <tr>
+            {% if use_multichoice %}
+            {% set answer_style_text = "monivalinta" %}
+            {% else %}
+            {% set answer_style_text = "kirjoitus" %}
+            {% endif %}
+            <th scope="row" class="col-12 pt-0 pl-0 pb-0">Oikeat {{ answer_style_text }}vastaukset yhteensä:</th>
+        </tr>
+        <tr>
+            <td class="col-12 pt-1 pb-0">{{ statistics.correct }} / {{ statistics.all }} ({{ "%0.1f" | format(statistics.correct_percent) }}%)
+            </td>
+        </tr>
+    </tbody>
+</table>
+{% endif %}
 <hr>
