@@ -51,13 +51,7 @@
         {% endif %}
     </div>
     <div class="col-4 bg-light rounded p-2">
-        <h3>{{ exercise.title }}
-            {% if not exercise.visible %}
-            <small class="text-muted">(näkymätön)</small>
-            {% endif %}
-        </h3>
-        <p>{{ exercise.topic }}</p>
-        <hr>
+        {% include "exercise_info.html" %}
         <div class="col-12 text-center">
             {% if admin %}
             <a class="btn btn-primary mb-2 w-75" href="/exercise/{{ exercise.id }}/modify" role="button">Muuta

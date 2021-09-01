@@ -1,0 +1,9 @@
+<h3 class="mb-0">
+    {{ exercise.title }}
+    {% if not exercise.visible %}
+    <small class="text-muted">(näkymätön)</small>
+    {% endif %}
+</h3>
+<p class="small text-muted">Luotu: {{ exercise.created_at.strftime("%d-%m-%Y") }}</p>
+<p>{{ exercise.topic }}</p>
+<hr>
