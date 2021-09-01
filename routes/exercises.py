@@ -33,9 +33,10 @@ def read_exercise_form():
     return title, topic
 
 
-@app.route("/exercise/<int:exercise_id>/visible")
+@app.route("/exercise/<int:exercise_id>/visible", methods=["POST"])
 def flip_exercise_visibility(exercise_id):
     helpers.check_admin_privileges()
+    helpers.check_csrf()
     exercise = helpers.get_exercise_or_abort(exercise_id)
     exercises.set_visible(exercise_id, not exercise.visible)
     return redirect(f"/exercise/{exercise_id}")

@@ -60,19 +60,24 @@
         <hr>
         <div class="col-12 text-center">
             {% if admin %}
-            <a class="btn btn-primary mb-2 w-75" href="/exercise/{{ exercise.id }}/modify" role="button">Muuta tietoja</a>
+            <a class="btn btn-primary mb-2 w-75" href="/exercise/{{ exercise.id }}/modify" role="button">Muuta
+                tietoja</a>
             <br>
             <a class="btn btn-primary mb-2 w-75" href="/exercise/{{ exercise.id }}/word" role="button">Muokkaa
                 sanoja</a>
             <br>
-            {% if not exercise.visible %}
-            <a class="btn btn-primary mb-2 w-75" href="/exercise/{{ exercise.id }}/visible" role="button">Tee
-                näkyväksi</a>
-            {% else %}
-            <a class="btn btn-primary mb-2 w-75" href="/exercise/{{ exercise.id }}/visible" role="button">Tee
-                näkymättömäksi</a>
-            {% endif %}
-            <a class="btn btn-danger mb-2 w-75" href="/exercise/{{ exercise.id }}/delete" role="button">Poista harjoitus</a>
+            <form action="/exercise/{{ exercise.id }}/visible" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                {% if not exercise.visible %}
+                <button type="submit" class="btn btn-primary mb-2 w-75">Tee
+                    näkyväksi</button>
+                {% else %}
+                <button type="submit" class="btn btn-primary mb-2 w-75">Tee
+                    näkymättömäksi</button>
+                {% endif %}
+            </form>
+            <a class="btn btn-danger mb-2 w-75" href="/exercise/{{ exercise.id }}/delete" role="button">Poista
+                harjoitus</a>
             <hr>
             {% endif %}
             <form action="/exercise/{{ exercise.id }}/flip_answer_style" method="POST">
