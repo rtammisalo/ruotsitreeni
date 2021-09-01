@@ -63,6 +63,10 @@
             {% if words %}
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary mb-2 w-75" name="modify">Siirry muokkaamaan sanaa</button>
+                    {% if selected_word %}
+                    <a class="btn btn-primary mb-2 w-75" href="/exercise/{{ exercise.id }}/word" role="button">Luo uusi
+                        sana</a>
+                    {% endif %}
                     <button type="submit" class="btn btn-primary w-75" name="remove">Poista sanalistan sana</button>
                 </div>
             {% endif %}
