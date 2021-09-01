@@ -57,6 +57,20 @@
     }
 
     const password = document.getElementById("inputPassword");
+    const passwordAgain = document.getElementById("inputPasswordAgain");
+
+    validatePasswordAgain = function() {
+        let error_message = "";
+
+            if (passwordAgain.value !== password.value) {
+                error_message = "Salasanat eivät ole samat.";
+                passwordAgain.setCustomValidity(error_message);
+            } else {
+                passwordAgain.setCustomValidity("")
+            }
+
+            document.getElementById("invalidInputPasswordAgain").innerHTML = error_message;
+    };
 
     if (password) {
         password.addEventListener("input", function (event) {
@@ -71,23 +85,17 @@
             }
 
             document.getElementById("invalidInputPassword").innerHTML = error_message;
+
+            if (passwordAgain) {
+                validatePasswordAgain();
+            }
         });
     }
 
-    const passwordAgain = document.getElementById("inputPasswordAgain");
 
     if (passwordAgain) {
         passwordAgain.addEventListener("input", function (event) {
-            let error_message = "";
-
-            if (passwordAgain.value !== password.value) {
-                error_message = "Salasanat eivät ole samat.";
-                passwordAgain.setCustomValidity(error_message);
-            } else {
-                passwordAgain.setCustomValidity("")
-            }
-
-            document.getElementById("invalidInputPasswordAgain").innerHTML = error_message;
+            validatePasswordAgain();
         });
     }
 </script>
