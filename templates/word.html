@@ -52,7 +52,8 @@
                 <label for="wordSelection">Harjoituksen sanalista:</label>
                 <select class="form-control" id="wordSelection" name="wordSelection">
                     {% for word in words %}
-                        <option value="{{ word.id }}">{{ word.finnish_word}} : {{ word.swedish_word }}</option>
+                    {% if selected_word is defined and selected_word.id == word.id %}{% set selected_tag = "selected" %}{% endif %}
+                        <option value="{{ word.id }}" {{selected_tag}}>{{ word.finnish_word}} : {{ word.swedish_word }}</option>
                     {% endfor %}
                     {% if not words %}
                         <option>Ei sanoja</option>
@@ -61,7 +62,7 @@
             </div>
             {% if words %}
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary mb-2 w-75" name="modify">Muuta sanalistan sanaa</button>
+                    <button type="submit" class="btn btn-primary mb-2 w-75" name="modify">Siirry muokkaamaan sanaa</button>
                     <button type="submit" class="btn btn-primary w-75" name="remove">Poista sanalistan sana</button>
                 </div>
             {% endif %}
