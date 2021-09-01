@@ -10,6 +10,7 @@ MAX_MESSAGE_LEN = 100
 
 @app.route("/message/post", methods=["POST"])
 def post_message():
+    helpers.check_user_privileges()
     helpers.abort_invalid_user_data()
 
     message = request.form["inputMessage"]
@@ -24,7 +25,7 @@ def post_message():
 
 @app.route("/message/<int:message_id>/delete", methods=["POST", "GET"])
 def delete_message(message_id):
-    helpers.abort_non_admin()
+    helpers.check_admin_privileges()
 
     if request.method == "GET":
         message = messages.get_message(message_id)

@@ -8,7 +8,7 @@ import words
 
 @app.route("/exercise/<int:exercise_id>/modify", methods=["GET", "POST"])
 def modify_exercise(exercise_id):
-    helpers.abort_non_admin()
+    helpers.check_admin_privileges()
     exercise = exercises.get_exercise(exercise_id, users.get_logged_user_id())
     if not exercise:
         helpers.abort(404)
@@ -35,7 +35,7 @@ def read_exercise_form():
 
 @app.route("/exercise/<int:exercise_id>/visible")
 def flip_exercise_visibility(exercise_id):
-    helpers.abort_non_admin()
+    helpers.check_admin_privileges()
     exercise = helpers.get_exercise_or_abort(exercise_id)
     exercises.set_visible(exercise_id, not exercise.visible)
     return redirect(f"/exercise/{exercise_id}")
@@ -43,6 +43,7 @@ def flip_exercise_visibility(exercise_id):
 
 @app.route("/exercise/<int:exercise_id>/flip_answer_style", methods=["POST"])
 def flip_answer_style(exercise_id):
+    helpers.check_user_privileges()
     helpers.abort_invalid_user_data()
     exercise = helpers.get_exercise_or_abort(exercise_id)
     exercises.flip_exercise_answer_style(exercise, users.get_logged_user_id())
@@ -51,7 +52,7 @@ def flip_answer_style(exercise_id):
 
 @ app.route("/exercise/new", methods=["GET", "POST"])
 def create_exercise():
-    helpers.abort_non_admin()
+    helpers.check_admin_privileges()
 
     if request.method == "GET":
         return helpers.render_user_template("create_exercise.html")
@@ -72,8 +73,7 @@ def create_exercise():
 
 @ app.route("/exercise/<int:exercise_id>")
 def show_exercise(exercise_id):
-    if not users.get_logged_user_id():
-        return redirect("/")
+    helpers.check_user_privileges()
 
     exercise = helpers.get_exercise_or_abort(exercise_id)
     word = words.get_random_word(exercise_id)
@@ -96,7 +96,7 @@ def show_exercise(exercise_id):
 
 @app.route("/exercise/<int:exercise_id>/delete", methods=["POST", "GET"])
 def delete_exercise(exercise_id):
-    helpers.abort_non_admin()
+    helpers.check_admin_privileges()
 
     exercise = helpers.get_exercise_or_abort(exercise_id)
     if request.method == "GET":

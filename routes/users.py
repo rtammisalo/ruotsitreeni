@@ -1,5 +1,4 @@
 from flask import redirect, request
-from flask.templating import render_template
 from flask_init import app
 from routes import helpers
 import users
@@ -60,22 +59,20 @@ def logout_user():
 
 @app.route("/account/<int:user_id>")
 def show_account(user_id, error=None, message=None):
-    helpers.abort_invalid_user(user_id)
+    helpers.check_user_privileges(required_user_id=user_id)
 
     user = users.get_user_data_by_id(user_id)
-
     if user:
         stats = answers.get_user_statistics(user_id)
         kwargs = {"selected_user": user, "answers": stats,
                   "error": error, "message": message}
         return helpers.render_user_template("account.html", **kwargs)
-
-    helpers.abort(404)
+    return helpers.abort(404)
 
 
 @app.route("/account/<int:user_id>/change_password", methods=["POST"])
 def change_password(user_id):
-    helpers.abort_invalid_user(user_id)
+    helpers.check_user_privileges(required_user_id=user_id)
     helpers.abort_invalid_user_data()
 
     try:
@@ -98,7 +95,7 @@ def change_password(user_id):
 
 @app.route("/account/<int:user_id>/delete", methods=["GET", "POST"])
 def delete_user(user_id):
-    helpers.abort_invalid_user(user_id)
+    helpers.check_user_privileges(required_user_id=user_id)
 
     if users.is_admin() and user_id == users.get_logged_user_id():
         helpers.abort(404)
@@ -127,6 +124,7 @@ def delete_user(user_id):
 
 @app.route("/account/search", methods=["POST"])
 def search_account():
+    helpers.check_admin_privileges()
     helpers.abort_invalid_user_data(admin_required=True)
 
     username = request.form["inputUsername"]

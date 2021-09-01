@@ -116,3 +116,22 @@ def get_exercise_or_abort(exercise_id):
         abort(404)
 
     return exercise
+
+
+def check_user_privileges(required_user_id=None):
+    session_user_id = users.get_logged_user_id()
+    if not session_user_id:
+        abort(403)
+    user_data = users.get_user_data_by_id(session_user_id)
+    if not user_data:
+        users.logout()
+        abort(403)
+    if session_user_id != user_data["id"]:
+        abort(403)
+    if required_user_id:
+        abort_invalid_user(required_user_id)
+
+
+def check_admin_privileges():
+    check_user_privileges()
+    abort_non_admin()

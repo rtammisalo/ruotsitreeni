@@ -7,6 +7,7 @@ import users
 
 @app.route("/exercise/<int:exercise_id>/word/<int:word_id>/answer", methods=["POST"])
 def process_exercise_answer(exercise_id, word_id):
+    helpers.check_user_privileges()
     helpers.abort_invalid_user_data()
 
     answer = request.form["answer"]
@@ -25,7 +26,7 @@ def process_exercise_answer(exercise_id, word_id):
 
 @app.route("/exercise/<int:exercise_id>/word")
 def show_words(exercise_id):
-    helpers.abort_non_admin()
+    helpers.check_admin_privileges()
     exercise = helpers.get_exercise_or_abort(exercise_id)
     exercise_words = words.get_words(exercise_id)
     return helpers.render_user_template("create_word.html", exercise=exercise, words=exercise_words)
@@ -33,7 +34,8 @@ def show_words(exercise_id):
 
 @app.route("/exercise/<int:exercise_id>/word/new", methods=["POST"])
 def create_word(exercise_id):
-    helpers.abort_invalid_user_data(admin_required=True)
+    helpers.check_admin_privileges()
+    helpers.abort_invalid_user_data()
     exercise = helpers.get_exercise_or_abort(exercise_id)
     exercise_words = words.get_words(exercise_id)
     kwargs = {"exercise": exercise, "words": exercise_words}
@@ -106,7 +108,8 @@ def process_word_input_form(exercise_id, template_keywords, old_word_data=None):
 
 @app.route("/exercise/<int:exercise_id>/word/modify", methods=["POST"])
 def modify_or_delete_word(exercise_id):
-    helpers.abort_invalid_user_data(admin_required=True)
+    helpers.check_admin_privileges()
+    helpers.abort_invalid_user_data()
 
     word_id = request.form["wordSelection"]
     if request.form.get("remove", None) is not None:
@@ -122,7 +125,7 @@ def remove_word(exercise_id, word_id):
 
 @app.route("/exercise/<int:exercise_id>/word/<int:word_id>/modify", methods=["GET", "POST"])
 def modify_word(exercise_id, word_id):
-    helpers.abort_non_admin()
+    helpers.check_admin_privileges()
 
     word_data = words.get_word(word_id)
     exercise = helpers.get_exercise_or_abort(exercise_id)
