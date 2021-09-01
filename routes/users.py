@@ -60,7 +60,6 @@ def logout_user():
 @app.route("/account/<int:user_id>")
 def show_account(user_id, error=None, message=None):
     helpers.check_user_privileges(required_user_id=user_id)
-
     user = users.get_user_data_by_id(user_id)
     if user:
         stats = answers.get_user_statistics(user_id)
@@ -73,7 +72,7 @@ def show_account(user_id, error=None, message=None):
 @app.route("/account/<int:user_id>/change_password", methods=["POST"])
 def change_password(user_id):
     helpers.check_user_privileges(required_user_id=user_id)
-    helpers.abort_invalid_user_data()
+    helpers.check_csrf()
 
     try:
         old_password = request.form["inputOldPassword"]
@@ -106,7 +105,7 @@ def delete_user(user_id):
     if request.method == "GET":
         return helpers.render_user_template("delete_user.html", **kwargs)
 
-    helpers.abort_invalid_user_data()
+    helpers.check_csrf()
 
     validator = helpers.Validator()
 
@@ -125,7 +124,7 @@ def delete_user(user_id):
 @app.route("/account/search", methods=["POST"])
 def search_account():
     helpers.check_admin_privileges()
-    helpers.abort_invalid_user_data(admin_required=True)
+    helpers.check_csrf()
 
     username = request.form["inputUsername"]
     selected_user_id = request.form["selectedUserId"]

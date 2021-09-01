@@ -16,7 +16,7 @@ def modify_exercise(exercise_id):
     if request.method == "GET":
         return helpers.render_user_template("modify_exercise.html", exercise=exercise)
 
-    helpers.abort_invalid_user_data()
+    helpers.check_csrf()
     try:
         title, topic = read_exercise_form()
         exercises.update(exercise_id, title, topic)
@@ -44,7 +44,7 @@ def flip_exercise_visibility(exercise_id):
 @app.route("/exercise/<int:exercise_id>/flip_answer_style", methods=["POST"])
 def flip_answer_style(exercise_id):
     helpers.check_user_privileges()
-    helpers.abort_invalid_user_data()
+    helpers.check_csrf()
     exercise = helpers.get_exercise_or_abort(exercise_id)
     exercises.flip_exercise_answer_style(exercise, users.get_logged_user_id())
     return redirect(f"/exercise/{exercise_id}")
@@ -58,7 +58,7 @@ def create_exercise():
         return helpers.render_user_template("create_exercise.html")
 
     if request.method == "POST":
-        helpers.abort_invalid_user_data(admin_required=True)
+        helpers.check_csrf()
 
         title, topic = read_exercise_form()
 
@@ -102,7 +102,7 @@ def delete_exercise(exercise_id):
     if request.method == "GET":
         return helpers.render_user_template("delete_exercise.html", selected_exercise=exercise)
 
-    helpers.abort_invalid_user_data()
+    helpers.check_csrf()
     exercises.delete_exercise(exercise_id)
     message = f"Harjoitus {exercise['title']} on poistettu."
     return helpers.render_user_template("delete_exercise.html", message=message)

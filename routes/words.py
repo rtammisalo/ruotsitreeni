@@ -8,7 +8,7 @@ import users
 @app.route("/exercise/<int:exercise_id>/word/<int:word_id>/answer", methods=["POST"])
 def process_exercise_answer(exercise_id, word_id):
     helpers.check_user_privileges()
-    helpers.abort_invalid_user_data()
+    helpers.check_csrf()
 
     answer = request.form["answer"]
     word = words.get_word(word_id)
@@ -35,7 +35,7 @@ def show_words(exercise_id):
 @app.route("/exercise/<int:exercise_id>/word/new", methods=["POST"])
 def create_word(exercise_id):
     helpers.check_admin_privileges()
-    helpers.abort_invalid_user_data()
+    helpers.check_csrf()
     exercise = helpers.get_exercise_or_abort(exercise_id)
     exercise_words = words.get_words(exercise_id)
     kwargs = {"exercise": exercise, "words": exercise_words}
@@ -109,7 +109,7 @@ def process_word_input_form(exercise_id, template_keywords, old_word_data=None):
 @app.route("/exercise/<int:exercise_id>/word/modify", methods=["POST"])
 def modify_or_delete_word(exercise_id):
     helpers.check_admin_privileges()
-    helpers.abort_invalid_user_data()
+    helpers.check_csrf()
 
     word_id = request.form["wordSelection"]
     if request.form.get("remove", None) is not None:
@@ -137,5 +137,5 @@ def modify_word(exercise_id, word_id):
     if request.method == "GET":
         return helpers.render_user_template("modify_word.html", **kwargs)
 
-    helpers.abort_invalid_user_data(admin_required=True)
+    helpers.check_csrf()
     return process_word_input_form(exercise_id, kwargs, word_data)

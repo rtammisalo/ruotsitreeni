@@ -85,19 +85,6 @@ def render_user_template(template, **kwargs):
     return render_template(template, **kwargs)
 
 
-def abort_invalid_user_data(admin_required=False):
-    try:
-        csrf_token = request.form.get("csrf_token", None)
-
-        if not csrf_token:
-            raise users.UserValidationError
-
-        users.validate_user(csrf_token, admin_required)
-
-    except users.UserValidationError:
-        abort(403)
-
-
 def abort_non_admin():
     if not users.is_admin():
         abort(403)
@@ -135,3 +122,12 @@ def check_user_privileges(required_user_id=None):
 def check_admin_privileges():
     check_user_privileges()
     abort_non_admin()
+
+
+def check_csrf():
+    form_csrf_token = request.form.get("csrf_token", None)
+    session_csrf_token = users.get_csrf_token()
+    if not form_csrf_token:
+        abort(403)
+    if form_csrf_token != session_csrf_token:
+        abort(403)
