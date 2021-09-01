@@ -34,37 +34,10 @@ def show_words(exercise_id):
 @app.route("/exercise/<int:exercise_id>/word/new", methods=["POST"])
 def create_word(exercise_id):
     helpers.abort_invalid_user_data(admin_required=True)
-
     exercise = helpers.get_exercise_or_abort(exercise_id)
-    finnish_word = request.form["inputFinnishWord"]
-    swedish_word = request.form["inputSwedishWord"]
-    image_file = request.files["inputImage"]
-    image_data = image_file.read()
-    filename = image_file.filename
-    error = helpers.Error()
-
-    if not finnish_word:
-        error.add("inputFinnishWord", "Suomenkielinen sana puuttuu.")
-
-    if not swedish_word:
-        error.add("inputSwedishWord", "Ruotsinkielinen sana puuttuu.")
-
-    if not image_file or not filename.endswith((".jpg")):
-        error.add("inputFile", "Tiedosto ei ole tyyppiä jpg.")
-
-    if len(image_data) > 150 * 1024:
-        error.add("inputFileSize", "Tiedosto on suurempi kuin 150 kB.")
-
-    if not error.empty():
-        return helpers.render_user_template("create_word.html", exercise=exercise,
-                                            words=words.get_words(exercise_id),
-                                            error=error)
-
-    choices = request.form["inputMultipleChoice"].splitlines()
-    word_id = words.add_word(exercise_id, finnish_word,
-                             swedish_word, image_data)
-    words.add_multiple_choices(word_id, choices[:20])
-    return redirect(f"/exercise/{exercise_id}/word")
+    exercise_words = words.get_words(exercise_id)
+    kwargs = {"exercise": exercise, "words": exercise_words}
+    return process_word_input_form(exercise_id, kwargs)
 
 
 def process_finnish_word(error):
@@ -114,7 +87,9 @@ def process_word_input_form(exercise_id, template_keywords, old_word_data=None):
 
     if not error.empty():
         template_keywords["error"] = error
-        return helpers.render_user_template("modify_word.html", **template_keywords)
+        if old_word_data:
+            return helpers.render_user_template("modify_word.html", **template_keywords)
+        return helpers.render_user_template("create_word.html", **template_keywords)
 
     if old_word_data:
         word_id = old_word_data["id"]
