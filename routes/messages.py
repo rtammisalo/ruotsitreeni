@@ -1,5 +1,4 @@
 from flask import redirect, request
-from flask.templating import render_template
 from flask_init import app
 from routes import helpers
 import messages

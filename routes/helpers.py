@@ -1,4 +1,3 @@
-from re import M
 from flask import render_template, request, abort, make_response, session
 from flask_init import app
 import users
