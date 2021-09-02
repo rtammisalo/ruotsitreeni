@@ -75,8 +75,9 @@ def create_exercise():
 @app.route("/exercise/<int:exercise_id>")
 def show_exercise(exercise_id):
     helpers.check_user_privileges()
-
     exercise = helpers.get_exercise_or_abort(exercise_id)
+    if not exercise["visible"] and not users.is_admin():
+        return redirect("/")
     word = words.get_random_word(exercise_id)
     choices = None
     answer = session.get("answer", None)
