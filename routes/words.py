@@ -21,6 +21,7 @@ def process_exercise_answer(exercise_id, word_id):
 
     session["answer"] = answer
     session["correct_answer"] = word.swedish_word
+    helpers.delete_exercise_question(exercise_id)
     used_multichoice = request.form["used_multichoice"]
     result = (answer == word.swedish_word)
     answers.add_answer(users.get_logged_user_id(),

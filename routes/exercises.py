@@ -47,6 +47,7 @@ def flip_answer_style(exercise_id):
     helpers.check_user_privileges()
     helpers.check_csrf()
     exercise = helpers.get_exercise_or_abort(exercise_id)
+    helpers.delete_exercise_question(exercise_id)
     exercises.flip_exercise_answer_style(exercise, users.get_logged_user_id())
     return redirect(f"/exercise/{exercise_id}")
 
@@ -78,7 +79,7 @@ def show_exercise(exercise_id):
     exercise = helpers.get_exercise_or_abort(exercise_id)
     if not exercise["visible"] and not users.is_admin():
         return redirect("/")
-    word = words.get_random_word(exercise_id)
+    word = helpers.get_exercise_question(exercise_id)
     choices = None
     answer = session.get("answer", None)
     correct_answer = session.get("correct_answer", None)

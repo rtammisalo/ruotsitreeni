@@ -1,4 +1,5 @@
-from flask import render_template, request, abort, make_response
+from re import M
+from flask import render_template, request, abort, make_response, session
 from flask_init import app
 import users
 import exercises
@@ -143,3 +144,30 @@ def check_csrf():
         abort(403)
     if form_csrf_token != session_csrf_token:
         abort(403)
+
+
+def _get_current_word_ids():
+    if not session.get("current_word_ids", None):
+        session["current_word_ids"] = {}
+    return session["current_word_ids"]
+
+
+def get_exercise_question(exercise_id):
+    current_word_ids = _get_current_word_ids()
+    word_id = current_word_ids.get(str(exercise_id), None)
+    if not word_id:
+        word = words.get_random_word(exercise_id)
+        if word:
+            current_word_ids[str(exercise_id)] = word["id"]
+            # Without this the session changes are lost after redirect.
+            session.modified = True  # pylint: disable=assigning-non-slot
+    else:
+        word = words.get_word(word_id)
+    return word
+
+
+def delete_exercise_question(exercise_id):
+    current_word_ids = _get_current_word_ids()
+    if current_word_ids.get(str(exercise_id), None):
+        del current_word_ids[str(exercise_id)]
+        session.modified = True  # pylint: disable=assigning-non-slot
