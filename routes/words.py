@@ -19,6 +19,7 @@ def process_exercise_answer(exercise_id, word_id):
     if not answer or not word:
         return redirection
 
+    answer = answer.strip()
     session["answer"] = answer
     session["correct_answer"] = word.swedish_word
     helpers.delete_exercise_question(exercise_id)
