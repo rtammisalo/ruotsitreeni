@@ -1,6 +1,6 @@
 # Tsoha - Ruotsitreeni
 
-Sovelluksen tarkoituksena on ruotsin kielen perussanaston harjoittelu. Toisin kuin esimerkkisovelluksessa, Ruotsitreenissä ei käyttäjä voi luoda uusia harjoituksia ja/tai pakkoja, vaan kaikki harjoitukset ja sanat lisätään valmiina adminin toimesta sovelluksen tietokantaan. Pelkän suomi/ruotsi 'kortin' sijaan käytetään sovelluksessa hyödyksi kuvia, esim. kuva omenasta, jonka käyttäjä joutuu yhdistämään ruotsin kieliseen sanaan. Sanat jaetaan vaikkapa 100 sanan setteihin, joita käyttäjän oletetaan harjoittelevan, kunnes hän saa tarpeeksi monta oikein vastattua putkeen. Yhden setin harjoituksissa voisi myös olla kaksi eri vaikeustasoa, joista helpoimmassa aloitetaan setin harjoittelu 'tyhjästä', eli vastauksen kirjoittamisen sijaan tulee valita oikea vaihtoehto monivalintana. Kun käyttäjä läpäisee helpon vaikeustason, voi edetä vaikeammalle tasolle, jossa tulee vastata kirjoittamalla sana vastauskenttään.
+Sovelluksen tarkoituksena on ruotsin kielen perussanaston harjoittelu. Toisin kuin esimerkkisovelluksessa, Ruotsitreenissä ei tavallinen käyttäjä voi luoda uusia harjoituksia ja/tai pakkoja, vaan kaikki harjoitukset ja sanat lisätään valmiina adminin toimesta sovelluksen tietokantaan. Pelkän suomi/ruotsi 'kortin' sijaan käytetään sovelluksessa hyödyksi kuvia, esim. kuva omenasta, jonka käyttäjä joutuu yhdistämään ruotsin kieliseen sanaan. Admin luo sanoja harjoituksiin, jonka sanoja käyttäjä voi myöhemmin harjoitella. Harjoituksien vastauksessa voi käyttäjä myös valita vastaako hän monivalintakysymyksiin tai vaikeampaan teksikenttään kirjoitukseen.
 
 ## Asennusohjeet
 
@@ -43,18 +43,15 @@ Luo Heroku versio sovelluksesta käyttämällä kurssin ohjeita apuna. Ohjelmaa 
 - Harjoituksen luonnin jälkeen siirrytään luomaan uusia sanoja.
 - Sanat liittyvät jokainen yhteen harjoitukseen. Sanalla on suomenkielinen ja ruotsinkielinen kenttä, sekä kuva.
 - Sanoille voidaan myös antaa monivalinnan vastauksia listassa. Jos vääriä vastausvaihtoehtoja ei anna, niin sovellus valitsee satunnaisesti muista sanoista.
-- Harjoitukset voi kuitenkin muuttaa näkymättömiksi, jolloin tavalliset käyttäjät eivät niitä kykene näkemään.
+- Harjoitukset voi kuitenkin muuttaa näkymättömiksi, jolloin tavalliset käyttäjät eivät niitä kykene näkemään. Tämä tila on tarkoitettu harjoituksien muuttamista varten.
 - Harjoituksissa ei ole toteutettuna kuin ensimmäinen monivalintaan liittyvä vaikeusaste.
 - Vieraskirja (HypeZone) näkyy pääsivulla oikealla harjoitusten vieressä. Admin-tili voi 'poistaa' viestejä eli tehdä ne näkymättömiksi muille käyttäjille. Viesteissä näkyy kirjoittaja ja viestin sisältö. Poisto tapahtuu klikkaamalla viestiä listassa. Admin voi myös siirtyä katsomaan kyseisen viestin kirjoittajan käyttäjätilisivua, jos klikkaa käyttäjän nimeä poistokyselyssä.
 - Lomakkeilla on nyt javascript tarkastusta, jotta säästyy turhilta submiteilta.
 - Admin voi myös etsiä nimellä käyttäjiä käyttäjätililtä.
-
-## Puuttuvat ominaisuudet
-
-- Sanoja tai harjoituksia ei voi vielä poistaa tai muuttaa.
-- Harjoitusten nimeä tai selostusta ei voi muuttaa. Harjoitusta ei voi poistaa.
-- Käyttäjä ei voi vielä harjoitella vastausta ilman monivalintaa.
-- Harjoitussivulla voisi näyttää tilastointia liittyen vain kyseiseen harjoitukseen.
+- Admin voi poistaa sanoja ja harjoituksia. 
+- Admin voi muuttaa harjoitusten nimiä ja selostuksia.
+- Käyttäjä voi valita haluaako vastata monivalintana vai ei.
+- Harjoitussivulla käyttäjä näkee vastaustapaansa liittyvän kyseisen harjoituksen tilastoinnin oikealla tietopaneelissa.
 
 ## Sovelluksen ominaisuudet (aikaisempi suunnitelma)
 
