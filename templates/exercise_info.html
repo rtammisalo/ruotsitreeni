@@ -1,4 +1,4 @@
-<h3 class="mb-0">
+<h3 class="mb-0 text-truncate">
     {{ exercise.title }}
 </h3>
 {% if not exercise.visible %}
@@ -6,7 +6,7 @@
 {% endif %}
 <p class="small text-muted mt-0">Luotu: {{ exercise.created_at.strftime("%d-%m-%Y") }}
 </p>
-<p>{{ exercise.topic }}</p>
+<p class="text-break">{{ exercise.topic }}</p>
 {% if statistics is defined %}
 <hr>
 <table class="table table-borderless table-sm text-center text-muted">

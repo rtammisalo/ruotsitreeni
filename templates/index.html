@@ -19,12 +19,12 @@
             {% if exercise.visible or admin %}
                 <div class="row no-gutters bg-light position-relative mt-1 mb-1">
                     <div class="col-12 mt-2 p-2">
-                        <h3>{{ exercise.title }}
+                        <h3 class="text-truncate">{{ exercise.title }}
                         {% if not exercise.visible %}
                         <small class="text-muted">(näkymätön)</small>
                         {% endif %}
                         </h3>
-                        <p>{{ exercise.topic }}</p>
+                        <p class="text-break">{{ exercise.topic }}</p>
                         <a href="/exercise/{{ exercise.id }}" class="stretched-link">Mene harjoitukseen</a>
                     </div>
                 </div>

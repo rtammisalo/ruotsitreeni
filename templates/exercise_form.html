@@ -1,15 +1,17 @@
-<form action="{{ form_action }}" method="POST">
+<form class="needs-validation" action="{{ form_action }}" method="POST">
     <div class="form-group mt-2">
         <label for="inputExerciseTitle">Harjoituksen nimi:</label>
         <input type="text" class="form-control" id="inputExerciseTitle" name="inputExerciseTitle" value="{{ title }}"
-            aria-describedby="exerciseTitleHelp" required>
-        <small id="exerciseTitleHelp" class="form-text text-muted">Nimen tulee olla lyhyt, ytimekäs ja uniikki.</small>
+            aria-describedby="exerciseTitleHelp" minlength="1" maxlength="20" required>
+        <small id="exerciseTitleHelp" class="form-text text-muted">Nimen tulee olla lyhyt, ytimekäs ja uniikki. Max. 20
+            merkkiä pitkä.</small>
     </div>
     <div class="form-group">
         <label for="inputExerciseTopic">Harjoituksen aihe:</label>
-        <textarea class="form-control" id="inputExerciseTopic" rows="4" name="inputExerciseTopic"
-            required>{{ topic }}</textarea>
-        <small id="exerciseTopicHelp" class="form-text text-muted">Lisää harjoituksen aiheen kuvaus.</small>
+        <textarea class="form-control" id="inputExerciseTopic" rows="4" name="inputExerciseTopic" minlength="1"
+            maxlength="250" required>{{ topic }}</textarea>
+        <small id="exerciseTopicHelp" class="form-text text-muted">Lisää harjoituksen aiheen kuvaus. Max. 250
+            merkkiä.</small>
     </div>
     <div class="row">
         <div class="col-6">
@@ -20,3 +22,5 @@
 
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
+
+<script type="text/javascript" src="/static/validation.js"></script>
