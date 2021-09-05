@@ -54,6 +54,7 @@ def create_word(exercise_id):
 
 def process_finnish_word(error):
     finnish_word = request.form.get("inputFinnishWord", None)
+    finnish_word = finnish_word.strip()
     if not finnish_word:
         error.add("inputFinnishWord", "Suomenkielinen sana puuttuu.")
     return finnish_word
@@ -61,6 +62,7 @@ def process_finnish_word(error):
 
 def process_swedish_word(error):
     swedish_word = request.form.get("inputSwedishWord", None)
+    swedish_word = swedish_word.strip()
     if not swedish_word:
         error.add("inputSwedishWord", "Ruotsinkielinen sana puuttuu.")
     return swedish_word
